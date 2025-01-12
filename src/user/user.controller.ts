@@ -171,41 +171,6 @@ export class UserController {
     return this.userService.deleteUser(id, user);
   }
 
-//   @Auth()
-//  @Post("/approve")
-//   async approveMaterial(
-//   @Query("materialId") materialId: string,
-//   @Query("userId") userId: string
-// ) {
-//   if (!materialId || !userId) {
-//     throw new BadRequestException("Material ID and User ID are required");
-//   }
-
-//   const material = await this.materialService.approveMaterial(materialId, userId);
-//   return material;
-// }
-
-
-// @Auth()
-// @Post("/update-material-status")
-//  async updateMaterialStatus(
-//  @Query("materialId") materialId: string,
-//  @Query("userId") userId: string,
-//  @Query("status") status: string
-// ) {
-//  if (!materialId || !userId) {
-//    throw new BadRequestException("Material ID and User ID are required");
-//  }
-
-//  if (!status) {
-// 	throw new BadRequestException("Material Sttsus is required");
-//   }
-
-//  const material = await this.materialService.updateMaterialStatus(materialId, userId, status);
-//  return material;
-// }
-
-
 @Auth()
 @Post("/batch-approve")
 async batchApproveMaterials(
