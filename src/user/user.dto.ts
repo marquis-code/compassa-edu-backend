@@ -8,7 +8,6 @@ import {
 	IsMongoId,
 	IsEnum
 } from "class-validator";
-import { SubscriptionPlan } from "../shared/enums";
 
 export enum UserRole {
 	ADMIN = "admin",
@@ -32,21 +31,17 @@ export class CreateUserDto {
 	@IsMobilePhone(null, {}, { message: "Enter a valid phone number" })
 	phone: string;
 
-	@IsOptional()
-	@IsArray({ message: "Activities must be an array" })
-	@IsMongoId({ each: true, message: "Each activity must be a valid MongoDB ID" })
-	activities?: string[]; // Optional array of MongoDB IDs
+	@IsMobilePhone(null, {}, { message: "Enter a valid matric number" })
+	matric: string;
 
-
-	// @IsOptional()
-	@IsString()
-	@IsEnum(SubscriptionPlan, { message: "Subscription plan must be either 'basic' or 'premium'" })
-	subscriptionPlan?: SubscriptionPlan;
-
+	@IsMobilePhone(null, {}, { message: "Enter a valid matric number" })
+	points?: number;
 
 	@IsOptional()
-	@IsString({ message: "Subscription expiry must be a valid string" })
-	subscriptionExpiry?: Date; // Change to Date
+	@IsArray({ message: "Uploads must be an array" })
+	@IsMongoId({ each: true, message: "Each upload must be a valid MongoDB ID" })
+	uploadedMaterials?: string[]; // Optional array of MongoDB IDs
+
 
 	@IsOptional()
 	@IsEnum(UserRole, { message: "Enter a valid role: admin or user" })
@@ -73,19 +68,13 @@ export class UpdateUserDto {
 	phone?: string;
 
 	@IsOptional()
-	@IsArray({ message: "Activities must be an array" })
-	@IsMongoId({ each: true, message: "Each activity must be a valid MongoDB ID" })
-	activities?: string[]; // Optional array of MongoDB IDs
+	@IsMobilePhone(null, {}, { message: "Enter a valid matric number" })
+	matric?: string;
 
 	@IsOptional()
-	@IsEnum(SubscriptionPlan, { message: "Subscription plan must be either 'basic' or 'premium'" })
-	subscriptionPlan?: SubscriptionPlan;
-
-	@IsOptional()
-	@IsString({
-		message: "",
-	})
-	subscriptionExpiry?: string;
+	@IsArray({ message: "Uploads must be an array" })
+	@IsMongoId({ each: true, message: "Each upload must be a valid MongoDB ID" })
+	uploads?: string[]; // Optional array of MongoDB IDs
 
 	@IsOptional()
 	@IsEnum(UserRole, { message: "Enter a valid role: admin or user" })

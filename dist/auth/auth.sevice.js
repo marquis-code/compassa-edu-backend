@@ -29,7 +29,7 @@ let AuthService = class AuthService {
         return await this.userService.createUser(dto);
     }
     async login(dto) {
-        const user = await this.User.findOne({ email: dto.email }).select("+password");
+        const user = await this.User.findOne({ email: dto.matric }).select("+password");
         if (!user)
             throw new common_1.NotFoundException("No user exists with the entered email");
         const isMatch = await user.matchPassword(dto.password);

@@ -15,7 +15,7 @@ let ImageModule = class ImageModule {
 exports.ImageModule = ImageModule;
 exports.ImageModule = ImageModule = __decorate([
     (0, common_1.Module)({
-        imports: [user_module_1.UserModule],
+        imports: [(0, common_1.forwardRef)(() => user_module_1.UserModule)],
         controllers: [image_controller_1.ImageController],
     })
 ], ImageModule);

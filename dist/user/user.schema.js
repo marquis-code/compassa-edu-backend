@@ -15,7 +15,6 @@ const mongoose_2 = require("mongoose");
 const jsonwebtoken_1 = require("jsonwebtoken");
 const bcryptjs_1 = require("bcryptjs");
 const crypto_1 = require("crypto");
-const enums_1 = require("../shared/enums");
 var UserRole;
 (function (UserRole) {
     UserRole["ADMIN"] = "admin";
@@ -41,21 +40,13 @@ __decorate([
     __metadata("design:type", String)
 ], User.prototype, "phone", void 0);
 __decorate([
-    (0, mongoose_1.Prop)([{ type: mongoose_2.Types.ObjectId, ref: 'Activity' }]),
-    __metadata("design:type", Array)
-], User.prototype, "activities", void 0);
-__decorate([
-    (0, mongoose_1.Prop)({
-        type: String,
-        enum: enums_1.SubscriptionPlan,
-        default: enums_1.SubscriptionPlan.BASIC,
-    }),
+    (0, mongoose_1.Prop)({ required: true }),
     __metadata("design:type", String)
-], User.prototype, "subscriptionPlan", void 0);
+], User.prototype, "matric", void 0);
 __decorate([
-    (0, mongoose_1.Prop)({ type: Date, default: null }),
-    __metadata("design:type", Date)
-], User.prototype, "subscriptionExpiry", void 0);
+    (0, mongoose_1.Prop)({ default: 0 }),
+    __metadata("design:type", Number)
+], User.prototype, "points", void 0);
 __decorate([
     (0, mongoose_1.Prop)(),
     __metadata("design:type", String)
@@ -65,6 +56,10 @@ __decorate([
     __metadata("design:type", Date)
 ], User.prototype, "resetPasswordExpire", void 0);
 __decorate([
+    (0, mongoose_1.Prop)([{ type: mongoose_2.Types.ObjectId, ref: "Materials" }]),
+    __metadata("design:type", Array)
+], User.prototype, "uploadedMaterials", void 0);
+__decorate([
     (0, mongoose_1.Prop)({
         type: String,
         enum: UserRole,
@@ -73,14 +68,9 @@ __decorate([
     __metadata("design:type", String)
 ], User.prototype, "role", void 0);
 exports.User = User = __decorate([
-    (0, mongoose_1.Schema)()
+    (0, mongoose_1.Schema)({ timestamps: true })
 ], User);
 exports.UserSchema = mongoose_1.SchemaFactory.createForClass(User);
-exports.UserSchema.virtual('activityDetails', {
-    ref: 'Activity',
-    localField: '_id',
-    foreignField: 'user',
-});
 exports.UserSchema.methods.matchPassword = async function (enteredPassword) {
     return await (0, bcryptjs_1.compare)(enteredPassword, this.password);
 };

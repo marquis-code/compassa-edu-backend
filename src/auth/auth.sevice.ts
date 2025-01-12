@@ -28,30 +28,11 @@ export class AuthService {
 
   async signup(dto: SignupDto) {
     return await this.userService.createUser(dto);
-  
-    // const existingUser = await this.User.findOne({ email: dto.email });
-  
-    // if (existingUser) {
-    //   throw new ConflictException("A user already exists with the entered email");
-    // }
-  
-    // const user = new this.User(dto);
-  
-    //   const today = new Date();
-    //   const expiryDate = new Date(today);
-    //   expiryDate.setDate(today.getDate() + 60); // Add 60 days
-    //   user.subscriptionExpiry = expiryDate;
-  
-    // await user.save();
-  
-    // user.password = undefined;
-  
-    // return { user };
   }
   
 
   async login(dto: LoginDto) {
-    const user = await this.User.findOne({ email: dto.email }).select("+password");
+    const user = await this.User.findOne({ email: dto.matric }).select("+password");
 
     if (!user) throw new NotFoundException("No user exists with the entered email");
 

@@ -25,9 +25,12 @@
 import { Model } from "mongoose";
 import { User, UserDocument } from "./user.schema";
 import { CreateUserDto, UpdateUserDto } from "./user.dto";
+import { Material } from "../materials/materials.schema";
+import { MaterialService } from "../materials/materials.service";
 export declare class UserService {
     private readonly User;
-    constructor(User: Model<UserDocument>);
+    private readonly materialService;
+    constructor(User: Model<UserDocument>, materialService: MaterialService);
     getUsers(): Promise<{
         users: (import("mongoose").Document<unknown, {}, UserDocument> & import("mongoose").Document<unknown, {}, User> & User & {
             _id: import("mongoose").Types.ObjectId;
@@ -65,4 +68,10 @@ export declare class UserService {
         }>;
     }>;
     deleteUser(id: string, currentUser: UserDocument): Promise<{}>;
+    uploadMaterial(userId: string, name: string, description: string, fileUrl: string, academicLevel: string, semester: string, materialType: string): Promise<Material>;
+    getApprovedMaterials(query: any): Promise<Material[]>;
+    addPointsToUser(userId: string, points: number): Promise<void>;
+    addUploadedMaterial(userId: string, materialId: string): Promise<void>;
+    getUserMaterials(userId: string): Promise<Material[]>;
+    getUserProfile(userId: string): Promise<any>;
 }

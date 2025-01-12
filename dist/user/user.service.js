@@ -17,9 +17,11 @@ const common_1 = require("@nestjs/common");
 const mongoose_1 = require("@nestjs/mongoose");
 const mongoose_2 = require("mongoose");
 const user_schema_1 = require("./user.schema");
+const materials_service_1 = require("../materials/materials.service");
 let UserService = class UserService {
-    constructor(User) {
+    constructor(User, materialService) {
         this.User = User;
+        this.materialService = materialService;
     }
     async getUsers() {
         const users = await this.User.find();
@@ -31,8 +33,7 @@ let UserService = class UserService {
             throw new common_1.ConflictException(["A user already exists with the entered email"]);
         }
         const currentDate = new Date();
-        const subscriptionExpiry = new Date(currentDate.setDate(currentDate.getDate() + 60));
-        const user = new this.User(Object.assign(Object.assign({}, createUserDto), { activities: createUserDto.activities || [], subscriptionExpiry }));
+        const user = new this.User(Object.assign(Object.assign({}, createUserDto), { uploadedMaterials: createUserDto.uploadedMaterials || [] }));
         const savedUser = await user.save();
         if (savedUser) {
             savedUser.password = undefined;
@@ -70,11 +71,45 @@ let UserService = class UserService {
         await user.deleteOne();
         return {};
     }
+    async uploadMaterial(userId, name, description, fileUrl, academicLevel, semester, materialType) {
+        const material = await this.materialService.create({ name, description, fileUrl, academicLevel, semester, materialType }, userId);
+        return material;
+    }
+    async getApprovedMaterials(query) {
+        return this.materialService.findAll(query);
+    }
+    async addPointsToUser(userId, points) {
+        await this.User.findByIdAndUpdate(userId, { $inc: { points } });
+    }
+    async addUploadedMaterial(userId, materialId) {
+        await this.User.findByIdAndUpdate(userId, {
+            $push: { uploadedMaterials: materialId },
+        });
+    }
+    async getUserMaterials(userId) {
+        return this.materialService.findByUserId(userId);
+    }
+    async getUserProfile(userId) {
+        const user = await this.User.findById(userId);
+        if (!user) {
+            throw new common_1.NotFoundException(`User with ID ${userId} not found`);
+        }
+        const materialsUploaded = await this.materialService.countMaterialsByUser(userId);
+        return {
+            id: user._id,
+            name: user.name,
+            email: user.email,
+            materialsUploaded,
+            points: user.points,
+        };
+    }
 };
 exports.UserService = UserService;
 exports.UserService = UserService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, mongoose_1.InjectModel)(user_schema_1.User.name)),
-    __metadata("design:paramtypes", [mongoose_2.Model])
+    __param(1, (0, common_1.Inject)((0, common_1.forwardRef)(() => materials_service_1.MaterialService))),
+    __metadata("design:paramtypes", [mongoose_2.Model,
+        materials_service_1.MaterialService])
 ], UserService);
 //# sourceMappingURL=user.service.js.map

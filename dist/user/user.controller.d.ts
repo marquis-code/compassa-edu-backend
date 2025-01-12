@@ -24,11 +24,14 @@
 /// <reference types="mongoose" />
 /// <reference types="mongoose/types/inferschematype" />
 import { UserDocument } from "./user.schema";
+import { Request } from 'express';
 import { UserService } from "./user.service";
+import { MaterialService } from "../materials/materials.service";
 import { CreateUserDto, UpdateUserDto } from "./user.dto";
 export declare class UserController {
     private userService;
-    constructor(userService: UserService);
+    private readonly materialService;
+    constructor(userService: UserService, materialService: MaterialService);
     getUsers(): Promise<{
         users: (import("mongoose").Document<unknown, {}, UserDocument> & import("mongoose").Document<unknown, {}, import("./user.schema").User> & import("./user.schema").User & {
             _id: import("mongoose").Types.ObjectId;
@@ -66,4 +69,10 @@ export declare class UserController {
         }>;
     }>;
     deleteUser(id: string, user: UserDocument): Promise<{}>;
+    approveMaterial(materialId: string, userId: string): Promise<import("../materials/materials.schema").Material>;
+    getPendingMaterials(query: any): Promise<import("../materials/materials.schema").Material[]>;
+    getAllMaterials(query: any): Promise<import("../materials/materials.schema").Material[]>;
+    getApprovedMaterials(query: any): Promise<import("../materials/materials.schema").Material[]>;
+    getUserMaterials(req: Request): Promise<import("../materials/materials.schema").Material[]>;
+    getUserProfile(req: Request): Promise<any>;
 }

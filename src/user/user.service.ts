@@ -4,7 +4,9 @@ import {
   NotFoundException,
   ForbiddenException,
   ConflictException,
-  BadRequestException
+  BadRequestException,
+  forwardRef,
+  Inject
 } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 
@@ -16,12 +18,19 @@ import { User, UserDocument } from "./user.schema";
 
 // DTOs
 import { CreateUserDto, UpdateUserDto } from "./user.dto";
+import { Material} from "../materials/materials.schema";
+import { MaterialService } from "../materials/materials.service";
 
 
 @Injectable()
 export class UserService {
   constructor(
-    @InjectModel(User.name) private readonly User: Model<UserDocument>
+    @InjectModel(User.name) private readonly User: Model<UserDocument>,
+    @Inject(forwardRef(() => MaterialService))
+    private readonly materialService: MaterialService,
+    // @InjectModel(User.name) private readonly User: Model<UserDocument>,
+    // private readonly materialService: MaterialService
+    // @InjectModel(Material.name) private readonly materialModel: Model<MaterialDocument>
   ) {}
 
   async getUsers() {
@@ -40,13 +49,9 @@ export class UserService {
   
     const currentDate = new Date();
   
-    // Set subscription expiry to 60 days from now regardless of the subscription plan
-    const subscriptionExpiry = new Date(currentDate.setDate(currentDate.getDate() + 60));
-  
     const user = new this.User({
       ...createUserDto,
-      activities: createUserDto.activities || [], // Default to an empty array if not provided
-      subscriptionExpiry, // Set calculated expiry date
+      uploadedMaterials: createUserDto.uploadedMaterials || []
     });
   
     const savedUser = await user.save();
@@ -101,4 +106,61 @@ export class UserService {
 
     return {};
   }
+
+  async uploadMaterial(
+    userId: string,
+    name: string,
+    description: string,
+    fileUrl: string,
+    academicLevel: string,
+    semester: string,
+    materialType: string,
+  ) {
+    const material = await this.materialService.create(
+      { name, description, fileUrl, academicLevel, semester, materialType },
+      userId,
+    );
+    return material;
+  }
+
+  async getApprovedMaterials(query: any): Promise<Material[]> {
+    return this.materialService.findAll(query)
+  }
+
+
+  async addPointsToUser(userId: string, points: number): Promise<void> {
+    await this.User.findByIdAndUpdate(userId, { $inc: { points } });
+  }
+
+  async addUploadedMaterial(userId: string, materialId: string): Promise<void> {
+    await this.User.findByIdAndUpdate(userId, {
+      $push: { uploadedMaterials: materialId },
+    });
+  }
+
+  
+  async getUserMaterials(userId: string): Promise<Material[]> {
+    return this.materialService.findByUserId(userId)
+    // return this.materialModel.find({ user: userId }).exec();
+  }
+
+  async getUserProfile(userId: string): Promise<any> {
+    const user = await this.User.findById(userId);
+    if (!user) {
+      throw new NotFoundException(`User with ID ${userId} not found`);
+    }
+
+    // Fetch materials uploaded count from materialService
+    const materialsUploaded = await this.materialService.countMaterialsByUser(userId);
+
+    // Return user profile details
+    return {
+      id: user._id,
+      name: user.name,
+      email: user.email,
+      materialsUploaded,
+      points: user.points,
+    };
+  }
+
 }

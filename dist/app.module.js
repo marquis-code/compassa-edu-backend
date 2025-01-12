@@ -21,11 +21,9 @@ const cloudinary_service_1 = require("./cloudinary/cloudinary.service");
 const cloudinary_config_1 = require("./cloudinary.config");
 const cloudinary_module_1 = require("./cloudinary/cloudinary.module");
 const upload_module_1 = require("./upload/upload.module");
-const activity_module_1 = require("./activity/activity.module");
+const materials_module_1 = require("./materials/materials.module");
 const multer = require("multer");
 const path_1 = require("path");
-const cache_module_1 = require("./cache/cache.module");
-const health_tips_module_1 = require("./health-tips/health-tips.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -35,7 +33,6 @@ exports.AppModule = AppModule = __decorate([
             config_1.ConfigModule.forRoot({
                 isGlobal: true,
             }),
-            cache_module_1.CacheConfigModule,
             platform_express_1.MulterModule.register({
                 storage: multer.memoryStorage(),
             }),
@@ -61,11 +58,12 @@ exports.AppModule = AppModule = __decorate([
                 serveStaticOptions: { index: false },
             }),
             image_module_1.ImageModule,
-            user_module_1.UserModule,
-            auth_module_1.AuthMoudle,
+            auth_module_1.AuthModule,
             upload_module_1.UploadModule,
-            activity_module_1.ActivityModule,
-            health_tips_module_1.HealthTipsModule
+            materials_module_1.MaterialsModule,
+            auth_module_1.AuthModule,
+            user_module_1.UserModule,
+            image_module_1.ImageModule,
         ],
         providers: [
             { provide: core_1.APP_GUARD, useClass: throttler_1.ThrottlerGuard },

@@ -24,7 +24,6 @@
 /// <reference types="mongoose/types/inferschematype" />
 import { Types } from "mongoose";
 import { HydratedDocument } from "mongoose";
-import { SubscriptionPlan } from "../shared/enums";
 export type UserDocument = HydratedDocument<User> & {
     matchPassword: (password: string) => Promise<boolean>;
     getSignedJwtToken: () => string;
@@ -39,12 +38,14 @@ export declare class User {
     email: string;
     password: string;
     phone: string;
-    activities?: Types.ObjectId[];
-    subscriptionPlan: SubscriptionPlan;
-    subscriptionExpiry?: Date;
+    matric: string;
+    points?: number;
     resetPasswordToken?: string;
     resetPasswordExpire?: Date;
+    uploadedMaterials?: Types.ObjectId[];
     role: UserRole;
+    createdAt?: Date;
+    updatedAt?: Date;
 }
 export declare const UserSchema: import("mongoose").Schema<User, import("mongoose").Model<User, any, any, any, import("mongoose").Document<unknown, any, User> & User & {
     _id: Types.ObjectId;

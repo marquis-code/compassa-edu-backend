@@ -17,11 +17,13 @@ const common_1 = require("@nestjs/common/");
 const auth_decorator_1 = require("../auth/auth.decorator");
 const user_decorator_1 = require("./user.decorator");
 const user_service_1 = require("./user.service");
+const materials_service_1 = require("../materials/materials.service");
 const user_dto_1 = require("./user.dto");
 const validate_mongoId_1 = require("../utils/validate-mongoId");
 let UserController = class UserController {
-    constructor(userService) {
+    constructor(userService, materialService) {
         this.userService = userService;
+        this.materialService = materialService;
     }
     getUsers() {
         return this.userService.getUsers();
@@ -37,6 +39,30 @@ let UserController = class UserController {
     }
     deleteUser(id, user) {
         return this.userService.deleteUser(id, user);
+    }
+    async approveMaterial(materialId, userId) {
+        const material = await this.materialService.approveMaterial(materialId, userId);
+        return material;
+    }
+    async getPendingMaterials(query) {
+        return this.materialService.getPendingMaterials(query);
+    }
+    async getAllMaterials(query) {
+        return this.materialService.getAllMaterials(query);
+    }
+    async getApprovedMaterials(query) {
+        return this.userService.getApprovedMaterials(query);
+    }
+    async getUserMaterials(req) {
+        var _a;
+        if (!((_a = req.user) === null || _a === void 0 ? void 0 : _a.userId)) {
+            throw new common_1.HttpException('User not authenticated', common_1.HttpStatus.UNAUTHORIZED);
+        }
+        return this.userService.getUserMaterials(req.user.userId);
+    }
+    async getUserProfile(req) {
+        var _a;
+        return this.userService.getUserProfile((_a = req.user) === null || _a === void 0 ? void 0 : _a.userId);
     }
 };
 exports.UserController = UserController;
@@ -79,8 +105,58 @@ __decorate([
     __metadata("design:paramtypes", [String, Object]),
     __metadata("design:returntype", void 0)
 ], UserController.prototype, "deleteUser", null);
+__decorate([
+    (0, auth_decorator_1.Auth)(),
+    (0, common_1.Post)('/approve/:materialId/:userId'),
+    __param(0, (0, common_1.Param)('materialId')),
+    __param(1, (0, common_1.Param)('userId')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, String]),
+    __metadata("design:returntype", Promise)
+], UserController.prototype, "approveMaterial", null);
+__decorate([
+    (0, auth_decorator_1.Auth)(),
+    (0, common_1.Get)('pending-materials'),
+    __param(0, (0, common_1.Query)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], UserController.prototype, "getPendingMaterials", null);
+__decorate([
+    (0, auth_decorator_1.Auth)(),
+    (0, common_1.Get)('all-materials'),
+    __param(0, (0, common_1.Query)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], UserController.prototype, "getAllMaterials", null);
+__decorate([
+    (0, auth_decorator_1.Auth)(),
+    (0, common_1.Get)('approved-materials'),
+    __param(0, (0, common_1.Query)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], UserController.prototype, "getApprovedMaterials", null);
+__decorate([
+    (0, auth_decorator_1.Auth)(),
+    (0, common_1.Get)('my-materials'),
+    __param(0, (0, common_1.Req)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], UserController.prototype, "getUserMaterials", null);
+__decorate([
+    (0, auth_decorator_1.Auth)(),
+    (0, common_1.Get)('profile'),
+    __param(0, (0, common_1.Req)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], UserController.prototype, "getUserProfile", null);
 exports.UserController = UserController = __decorate([
     (0, common_1.Controller)("users"),
-    __metadata("design:paramtypes", [user_service_1.UserService])
+    __metadata("design:paramtypes", [user_service_1.UserService,
+        materials_service_1.MaterialService])
 ], UserController);
 //# sourceMappingURL=user.controller.js.map

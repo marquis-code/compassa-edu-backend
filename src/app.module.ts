@@ -1,11 +1,11 @@
-import { Module } from "@nestjs/common";
+import { Module, forwardRef } from "@nestjs/common";
 import { ConfigModule, ConfigService } from "@nestjs/config";
 import { APP_GUARD } from "@nestjs/core";
 import { MongooseModule } from "@nestjs/mongoose";
 import { ThrottlerModule, ThrottlerGuard } from "@nestjs/throttler";
 import { ServeStaticModule } from "@nestjs/serve-static";
 
-import { AuthMoudle } from "./auth/auth.module";
+import { AuthModule } from "./auth/auth.module";
 import { UserModule } from "./user/user.module";
 import { ImageModule } from "./image/image.module";
 import { MulterModule } from "@nestjs/platform-express";
@@ -14,20 +14,17 @@ import { CloudinaryService } from "./cloudinary/cloudinary.service";
 import { configureCloudinary } from "./cloudinary.config";
 import { CloudinaryModule } from "./cloudinary/cloudinary.module";
 import { UploadModule } from './upload/upload.module';
-import { ActivityModule } from './activity/activity.module';
+import { MaterialsModule } from './materials/materials.module';
 import * as multer from "multer";
 
 import { join } from "path";
 
-import { CacheConfigModule } from "./cache/cache.module";
-import { HealthTipsModule } from "./health-tips/health-tips.module";
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
     }),
-    CacheConfigModule,
     MulterModule.register({
       storage: multer.memoryStorage(),
     }),
@@ -54,11 +51,14 @@ import { HealthTipsModule } from "./health-tips/health-tips.module";
       serveStaticOptions: { index: false },
     }),
     ImageModule,
-    UserModule,
-    AuthMoudle,
+    AuthModule,
     UploadModule,
-    ActivityModule,
-    HealthTipsModule
+    MaterialsModule,
+    AuthModule,
+    UserModule,
+    ImageModule,
+    // forwardRef(() => MaterialsModule), // If circular dependencies exist
+    // forwardRef(() => UserModule),     // If circular dependencies exist
   ],
   providers: [
     { provide: APP_GUARD, useClass: ThrottlerGuard },
