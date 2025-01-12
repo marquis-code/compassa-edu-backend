@@ -24,7 +24,7 @@ import {
 	@IsMobilePhone(null, {}, { message: 'Enter a valid phone number' })
 	phone: string;
 
-	@IsMobilePhone(null, {}, { message: 'Enter a valid phone number' })
+	@IsString({ message: 'Enter your matric number' })
 	matric: string;
   
 	@IsString()
@@ -34,7 +34,7 @@ import {
   
 
 export class LoginDto {
-	@IsEmail({}, { message: "Enter a valid email" })
+	@IsString({ message: 'Enter your matric number' })
 	matric: string
 
 	@IsNotEmpty({ message: "Enter a password" })

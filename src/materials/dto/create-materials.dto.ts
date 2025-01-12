@@ -1,4 +1,42 @@
-import { IsNotEmpty, IsString } from 'class-validator';
+import { IsEnum, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+
+export enum MaterialStatus {
+  PENDING = 'pending',
+  APPROVED = 'approved',
+  REJECTED = 'rejected',
+}
+
+export enum Semester {
+  FIRST = 'first',
+  SECOND = 'second',
+}
+
+export enum MaterialType {
+  LECTURE_NOTE = 'lecture_note',
+  TEXTBOOK = 'textbook',
+  RESEARCH_PAPER = 'research_paper',
+  ASSIGNMENT = 'assignment',
+  PROJECT_REPORT = 'project_report',
+  EXAM_PAST_QUESTION = 'exam_past_question',
+  LAB_MANUAL = 'lab_manual',
+  STUDY_GUIDE = 'study_guide',
+  PRESENTATION_SLIDES = 'presentation_slides',
+  ARTICLE = 'article',
+  CASE_STUDY = 'case_study',
+  THESIS = 'thesis',
+  DISSERTATION = 'dissertation',
+  TUTORIAL_VIDEO = 'tutorial_video',
+  REFERENCE_MATERIAL = 'reference_material',
+}
+
+export enum AcademicLevel {
+  ONE_HUNDRED = '100',
+  TWO_HUNDRED = '200',
+  THREE_HUNDRED = '300',
+  FOUR_HUNDRED = '400',
+  FIVE_HUNDRED = '500',
+  SIX_HUNDRED = '600',
+}
 
 export class CreateMaterialDto {
   @IsString()
@@ -10,18 +48,22 @@ export class CreateMaterialDto {
   description: string;
 
   @IsString()
+  @IsOptional()
+  comment?: string;
+
+  @IsString()
   @IsNotEmpty()
   fileUrl: string;
 
-  @IsString()
+  @IsEnum(AcademicLevel)
   @IsNotEmpty()
-  academicLevel: string;
+  academicLevel: AcademicLevel;
 
-  @IsString()
+  @IsEnum(Semester)
   @IsNotEmpty()
-  semester: string;
+  semester: Semester;
 
-  @IsString()
+  @IsEnum(MaterialType)
   @IsNotEmpty()
-  materialType: string;
+  materialType: MaterialType;
 }

@@ -79,6 +79,9 @@ let MaterialsController = class MaterialsController {
             throw new common_1.HttpException(error.message || 'Error deleting material', common_1.HttpStatus.NOT_FOUND);
         }
     }
+    async batchUpdateMaterialStatus(updates) {
+        return await this.materialService.batchUpdateStatus(updates);
+    }
 };
 exports.MaterialsController = MaterialsController;
 __decorate([
@@ -129,8 +132,15 @@ __decorate([
     __metadata("design:paramtypes", [String, Object]),
     __metadata("design:returntype", Promise)
 ], MaterialsController.prototype, "delete", null);
+__decorate([
+    (0, common_1.Patch)('batch-update-status'),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Array]),
+    __metadata("design:returntype", Promise)
+], MaterialsController.prototype, "batchUpdateMaterialStatus", null);
 exports.MaterialsController = MaterialsController = __decorate([
-    (0, common_1.Controller)('activities'),
+    (0, common_1.Controller)('materials'),
     (0, common_1.UseGuards)(auth_guard_1.AuthGuard),
     __metadata("design:paramtypes", [materials_service_1.MaterialService])
 ], MaterialsController);

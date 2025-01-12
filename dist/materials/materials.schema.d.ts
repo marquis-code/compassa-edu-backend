@@ -23,16 +23,18 @@
 /// <reference types="mongoose/types/virtuals" />
 /// <reference types="mongoose/types/inferschematype" />
 import { Document, Types } from 'mongoose';
+import { MaterialStatus, Semester, MaterialType, AcademicLevel } from '../materials/dto/create-materials.dto';
 export type MaterialDocument = Material & Document;
 export declare class Material {
     name: string;
     description: string;
+    comment?: string;
     fileUrl: string;
-    status: string;
+    status: MaterialStatus;
     user: Types.ObjectId;
-    academicLevel: string;
-    semester: string;
-    materialType: string;
+    academicLevel: AcademicLevel;
+    semester: Semester;
+    materialType: MaterialType;
 }
 export declare const MaterialSchema: import("mongoose").Schema<Material, import("mongoose").Model<Material, any, any, any, Document<unknown, any, Material> & Material & {
     _id: Types.ObjectId;

@@ -24,7 +24,7 @@
 /// <reference types="mongoose/types/inferschematype" />
 import { Model } from 'mongoose';
 import { Material, MaterialDocument } from './materials.schema';
-import { CreateMaterialDto } from './dto/create-materials.dto';
+import { CreateMaterialDto, MaterialStatus } from './dto/create-materials.dto';
 import { UpdateMaterialDto } from './dto/update-materials.dto';
 import { UserService } from '../user/user.service';
 export declare class MaterialService {
@@ -32,13 +32,30 @@ export declare class MaterialService {
     private readonly userService;
     constructor(materialModel: Model<MaterialDocument>, userService: UserService);
     create(createMaterialDto: CreateMaterialDto, userId: string): Promise<Material>;
-    findAll(userId: string): Promise<Material[]>;
+    findAll(query: any): Promise<Material[]>;
     findOne(id: string, userId: string): Promise<Material>;
     update(id: string, updateMaterialDto: UpdateMaterialDto, userId: string): Promise<Material>;
     delete(id: string, userId: string): Promise<void>;
     findByUserId(userId: string): Promise<Material[]>;
-    approveMaterial(materialId: string, userId: string): Promise<Material>;
+    approveMaterial(materialId: string, userId: string, status: string): Promise<{
+        message: string;
+        material: Material;
+    }>;
     getPendingMaterials(query: any): Promise<Material[]>;
     getAllMaterials(query: any): Promise<Material[]>;
     countMaterialsByUser(userId: string): Promise<number>;
+    findById(materialId: string): Promise<Material>;
+    approveMaterialById(materialId: string): Promise<Material>;
+    findMaterialById(materialId: string): Promise<Material>;
+    updateMaterialById(materialId: string, updatePayload: Partial<Material>): Promise<Material>;
+    batchUpdateStatus(updates: {
+        materialId: string;
+        userId: string;
+        status: MaterialStatus;
+        comment?: string;
+    }[]): Promise<{
+        success: number;
+        failed: number;
+        details: any[];
+    }>;
 }

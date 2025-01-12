@@ -58,16 +58,16 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], AuthController.prototype, "login", null);
 __decorate([
-    (0, common_1.Get)("profile"),
     (0, auth_decorator_1.Auth)(),
+    (0, common_1.Get)("profile"),
     __param(0, (0, user_decorator_1.User)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", void 0)
 ], AuthController.prototype, "getCurrentUser", null);
 __decorate([
-    (0, common_1.Put)("update-password"),
     (0, auth_decorator_1.Auth)(),
+    (0, common_1.Put)("update-password"),
     __param(0, (0, common_1.Body)()),
     __param(1, (0, user_decorator_1.User)()),
     __metadata("design:type", Function),
@@ -75,6 +75,7 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], AuthController.prototype, "updatePassword", null);
 __decorate([
+    (0, auth_decorator_1.Auth)(),
     (0, common_1.Post)("forgot-password"),
     __param(0, (0, common_1.Req)()),
     __param(1, (0, common_1.Query)("email")),

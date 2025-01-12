@@ -9,6 +9,7 @@ import {
   Inject
 } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
+import { Semester, MaterialType, AcademicLevel } from '../materials/dto/create-materials.dto'
 
 // types
 import { Model } from "mongoose";
@@ -107,21 +108,55 @@ export class UserService {
     return {};
   }
 
-  async uploadMaterial(
-    userId: string,
-    name: string,
-    description: string,
-    fileUrl: string,
-    academicLevel: string,
-    semester: string,
-    materialType: string,
-  ) {
-    const material = await this.materialService.create(
-      { name, description, fileUrl, academicLevel, semester, materialType },
-      userId,
-    );
-    return material;
+  // async uploadMaterial(
+  //   userId: string,
+  //   name: string,
+  //   description: string,
+  //   fileUrl: string,
+  //   academicLevel: string,
+  //   semester: string,
+  //   materialType: string,
+  // ) {
+  //   const material = await this.materialService.create(
+  //     { name, description, fileUrl, academicLevel, semester, materialType },
+  //     userId,
+  //   );
+  //   return material;
+  // }
+
+async uploadMaterial(
+  userId: string,
+  name: string,
+  description: string,
+  fileUrl: string,
+  academicLevel: string,
+  semester: string,
+  materialType: string,
+) {
+  // Validate and cast semester to the Semester enum
+  if (!Object.values(Semester).includes(semester as Semester)) {
+    throw new Error(`Invalid semester: ${semester}. Valid options are: ${Object.values(Semester).join(', ')}`);
   }
+
+  // Validate and cast materialType to the MaterialType enum
+  if (!Object.values(MaterialType).includes(materialType as MaterialType)) {
+    throw new Error(`Invalid material type: ${materialType}. Valid options are: ${Object.values(MaterialType).join(', ')}`);
+  }
+
+  const material = await this.materialService.create(
+    { 
+      name, 
+      description, 
+      fileUrl, 
+      academicLevel: academicLevel as AcademicLevel, 
+      semester: semester as Semester, // Cast to Semester enum
+      materialType: materialType as MaterialType, // Cast to MaterialType enum
+    },
+    userId,
+  );
+  return material;
+}
+
 
   async getApprovedMaterials(query: any): Promise<Material[]> {
     return this.materialService.findAll(query)
@@ -140,11 +175,13 @@ export class UserService {
 
   
   async getUserMaterials(userId: string): Promise<Material[]> {
+    console.log("Looking for user with ID:", userId);
     return this.materialService.findByUserId(userId)
     // return this.materialModel.find({ user: userId }).exec();
   }
 
   async getUserProfile(userId: string): Promise<any> {
+    console.log("Looking for user with ID:", userId);
     const user = await this.User.findById(userId);
     if (!user) {
       throw new NotFoundException(`User with ID ${userId} not found`);

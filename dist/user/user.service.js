@@ -15,6 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserService = void 0;
 const common_1 = require("@nestjs/common");
 const mongoose_1 = require("@nestjs/mongoose");
+const create_materials_dto_1 = require("../materials/dto/create-materials.dto");
 const mongoose_2 = require("mongoose");
 const user_schema_1 = require("./user.schema");
 const materials_service_1 = require("../materials/materials.service");
@@ -72,7 +73,20 @@ let UserService = class UserService {
         return {};
     }
     async uploadMaterial(userId, name, description, fileUrl, academicLevel, semester, materialType) {
-        const material = await this.materialService.create({ name, description, fileUrl, academicLevel, semester, materialType }, userId);
+        if (!Object.values(create_materials_dto_1.Semester).includes(semester)) {
+            throw new Error(`Invalid semester: ${semester}. Valid options are: ${Object.values(create_materials_dto_1.Semester).join(', ')}`);
+        }
+        if (!Object.values(create_materials_dto_1.MaterialType).includes(materialType)) {
+            throw new Error(`Invalid material type: ${materialType}. Valid options are: ${Object.values(create_materials_dto_1.MaterialType).join(', ')}`);
+        }
+        const material = await this.materialService.create({
+            name,
+            description,
+            fileUrl,
+            academicLevel: academicLevel,
+            semester: semester,
+            materialType: materialType,
+        }, userId);
         return material;
     }
     async getApprovedMaterials(query) {
@@ -87,9 +101,11 @@ let UserService = class UserService {
         });
     }
     async getUserMaterials(userId) {
+        console.log("Looking for user with ID:", userId);
         return this.materialService.findByUserId(userId);
     }
     async getUserProfile(userId) {
+        console.log("Looking for user with ID:", userId);
         const user = await this.User.findById(userId);
         if (!user) {
             throw new common_1.NotFoundException(`User with ID ${userId} not found`);

@@ -17,12 +17,12 @@ const common_1 = require("@nestjs/common");
 const mongoose_1 = require("@nestjs/mongoose");
 const mongoose_2 = require("mongoose");
 const materials_schema_1 = require("./materials.schema");
+const create_materials_dto_1 = require("./dto/create-materials.dto");
 const user_service_1 = require("../user/user.service");
 let MaterialService = class MaterialService {
     constructor(materialModel, userService) {
         this.materialModel = materialModel;
         this.userService = userService;
-        console.log('MaterialService initialized:', { userService });
     }
     async create(createMaterialDto, userId) {
         const createdMaterial = new this.materialModel(Object.assign(Object.assign({}, createMaterialDto), { user: userId }));
@@ -30,8 +30,18 @@ let MaterialService = class MaterialService {
         await this.userService.addUploadedMaterial(userId, savedMaterial._id);
         return savedMaterial;
     }
-    async findAll(userId) {
-        return this.materialModel.find({ user: userId }).exec();
+    async findAll(query) {
+        const filters = { status: 'approved' };
+        if (query.academicLevel) {
+            filters.academicLevel = query.academicLevel;
+        }
+        if (query.semester) {
+            filters.semester = query.semester;
+        }
+        if (query.materialType) {
+            filters.materialType = query.materialType;
+        }
+        return this.materialModel.find(filters).exec();
     }
     async findOne(id, userId) {
         const material = await this.materialModel
@@ -64,12 +74,22 @@ let MaterialService = class MaterialService {
     async findByUserId(userId) {
         return this.materialModel.find({ user: userId }).exec();
     }
-    async approveMaterial(materialId, userId) {
+    async approveMaterial(materialId, userId, status) {
+        const material = await this.materialModel.findById(materialId);
+        if (!material) {
+            throw new common_1.NotFoundException(`Material with ID ${materialId} not found`);
+        }
+        if (material.status === 'approved') {
+            throw new common_1.ConflictException(`Material with ID ${materialId} has already been approved`);
+        }
         const approvedMaterial = await this.materialModel.findByIdAndUpdate(materialId, { status: 'approved' }, { new: true });
         if (approvedMaterial) {
             await this.userService.addPointsToUser(userId, 10);
         }
-        return approvedMaterial;
+        return {
+            message: 'Material has been approved successfully',
+            material: approvedMaterial,
+        };
     }
     async getPendingMaterials(query) {
         const filters = { status: 'pending' };
@@ -95,10 +115,84 @@ let MaterialService = class MaterialService {
         if (query.materialType) {
             filters.materialType = query.materialType;
         }
+        if (query.status) {
+            filters.status = query.status;
+        }
         return this.materialModel.find(filters).exec();
     }
     async countMaterialsByUser(userId) {
         return this.materialModel.countDocuments({ user: userId });
+    }
+    async findById(materialId) {
+        return this.materialModel.findById(materialId).exec();
+    }
+    async approveMaterialById(materialId) {
+        return this.materialModel.findByIdAndUpdate(materialId, { status: 'approved' }, { new: true }).exec();
+    }
+    async findMaterialById(materialId) {
+        const material = await this.materialModel.findById(materialId);
+        if (!material) {
+            throw new common_1.NotFoundException(`Material with ID ${materialId} not found`);
+        }
+        return material;
+    }
+    async updateMaterialById(materialId, updatePayload) {
+        const updatedMaterial = await this.materialModel.findByIdAndUpdate(materialId, updatePayload, { new: true });
+        if (!updatedMaterial) {
+            throw new common_1.NotFoundException(`Material with ID ${materialId} not found for update`);
+        }
+        return updatedMaterial;
+    }
+    async batchUpdateStatus(updates) {
+        const results = await Promise.all(updates.map(async (update) => {
+            try {
+                const { materialId, userId, status, comment } = update;
+                if (!Object.values(create_materials_dto_1.MaterialStatus).includes(status)) {
+                    throw new common_1.BadRequestException(`Invalid status: ${status}`);
+                }
+                const material = await this.findMaterialById(materialId);
+                if (material.status === status) {
+                    return {
+                        materialId,
+                        status,
+                        message: `Material already has the status '${status}'`,
+                        success: true,
+                    };
+                }
+                const updatePayload = { status };
+                if (status === create_materials_dto_1.MaterialStatus.REJECTED) {
+                    if (!comment) {
+                        throw new common_1.BadRequestException('A comment is required when rejecting a material');
+                    }
+                    updatePayload['comment'] = comment;
+                }
+                const updatedMaterial = await this.updateMaterialById(materialId, updatePayload);
+                if (status === create_materials_dto_1.MaterialStatus.APPROVED) {
+                    await this.userService.addPointsToUser(userId, 10);
+                }
+                return {
+                    materialId,
+                    status,
+                    message: `Material status updated to '${status}' successfully`,
+                    success: true,
+                };
+            }
+            catch (error) {
+                return {
+                    materialId: update.materialId,
+                    status: update.status,
+                    message: error.message || 'Failed to update material status',
+                    success: false,
+                };
+            }
+        }));
+        const success = results.filter((result) => result.success).length;
+        const failed = results.filter((result) => !result.success).length;
+        return {
+            success,
+            failed,
+            details: results,
+        };
     }
 };
 exports.MaterialService = MaterialService;

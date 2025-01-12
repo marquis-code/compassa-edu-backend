@@ -1,5 +1,5 @@
 import { MaterialService } from '../materials/materials.service';
-import { CreateMaterialDto } from './dto/create-materials.dto';
+import { CreateMaterialDto, MaterialStatus } from './dto/create-materials.dto';
 import { UpdateMaterialDto } from './dto/update-materials.dto';
 export declare class MaterialsController {
     private readonly materialService;
@@ -27,5 +27,15 @@ export declare class MaterialsController {
     delete(id: string, req: any): Promise<{
         success: boolean;
         message: string;
+    }>;
+    batchUpdateMaterialStatus(updates: {
+        materialId: string;
+        userId: string;
+        status: MaterialStatus;
+        comment?: string;
+    }[]): Promise<{
+        success: number;
+        failed: number;
+        details: any[];
     }>;
 }

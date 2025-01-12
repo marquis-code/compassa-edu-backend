@@ -11,14 +11,15 @@ import {
   UseGuards,
   HttpException,
   HttpStatus,
+  Patch
 } from '@nestjs/common';
 import { AuthGuard } from "../auth/auth.guard"
 // import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { MaterialService } from '../materials/materials.service';
-import { CreateMaterialDto } from './dto/create-materials.dto';
+import { CreateMaterialDto, MaterialStatus } from './dto/create-materials.dto';
 import { UpdateMaterialDto } from './dto/update-materials.dto';
 
-@Controller('activities')
+@Controller('materials')
 @UseGuards(AuthGuard) // Ensure only authenticated users can access these routes
 export class MaterialsController {
   constructor(private readonly materialService: MaterialService) {}
@@ -119,5 +120,13 @@ export class MaterialsController {
         HttpStatus.NOT_FOUND,
       );
     }
+  }
+
+
+  @Patch('batch-update-status')
+  async batchUpdateMaterialStatus(
+    @Body() updates: { materialId: string; userId: string; status: MaterialStatus; comment?: string }[],
+  ): Promise<{ success: number; failed: number; details: any[] }> {
+    return await this.materialService.batchUpdateStatus(updates);
   }
 }

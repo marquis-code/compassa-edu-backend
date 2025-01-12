@@ -27,7 +27,7 @@ __decorate([
     __metadata("design:type", String)
 ], SignupDto.prototype, "phone", void 0);
 __decorate([
-    (0, class_validator_1.IsMobilePhone)(null, {}, { message: 'Enter a valid phone number' }),
+    (0, class_validator_1.IsString)({ message: 'Enter your matric number' }),
     __metadata("design:type", String)
 ], SignupDto.prototype, "matric", void 0);
 __decorate([
@@ -39,7 +39,7 @@ class LoginDto {
 }
 exports.LoginDto = LoginDto;
 __decorate([
-    (0, class_validator_1.IsEmail)({}, { message: "Enter a valid email" }),
+    (0, class_validator_1.IsString)({ message: 'Enter your matric number' }),
     __metadata("design:type", String)
 ], LoginDto.prototype, "matric", void 0);
 __decorate([

@@ -44,18 +44,19 @@ export class AuthController {
 		return this.authService.login(dto)
 	}
 
-	@Get("profile")
 	@Auth()
+	@Get("profile")
 	getCurrentUser(@User() user: UserDocument) {
 		return { user }
 	}
 
-	@Put("update-password")
 	@Auth()
+	@Put("update-password")
 	updatePassword(@Body() dto: UpdatePasswordDto, @User() user: UserDocument) {
 		return this.authService.updatePassword(dto, user)
 	}
 
+	@Auth()
 	@Post("forgot-password")
 	forgotPassword(@Req() req: Request, @Query("email") email: string) {
 		return this.authService.forgotPassword(req, email)
