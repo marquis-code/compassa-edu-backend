@@ -27,7 +27,7 @@ async function bootstrap() {
   // Define CORS options
   const corsOptions: CorsOptions = {
     origin: (origin, callback) => {
-      const whitelist = ['https://compassa-edu-service.onrender.com', 'http://localhost:3000'];
+      const whitelist = ['https://compassa-edu.netlify.app/', 'http://localhost:3000'];
       if (!origin || whitelist.includes(origin)) {
         // Allow requests with no origin (e.g., mobile apps, Postman) and whitelisted origins
         callback(null, true);

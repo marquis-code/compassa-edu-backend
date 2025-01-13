@@ -73,6 +73,7 @@ export class UserController {
 	// Fetch user materials
 	return this.userService.getUserMaterials(userIdString);
   }
+  
   @Auth()
   @Get("profile")
   async getUserProfile(@Req() req: Request) {
@@ -97,20 +98,17 @@ export class UserController {
     return this.userService.getUserProfile(userIdString);
   }
 
-
   @Auth()
   @Get("pending-materials")
   async getPendingMaterials(@Query() query: any) {
     return this.materialService.getPendingMaterials(query);
   }
 
-
   @Auth()
   @Get("approved-materials")
   async getApprovedMaterials(@Query() query: any) {
     return this.userService.getApprovedMaterials(query);
   }
-
 
   @Get()
   getUsers() {
@@ -126,6 +124,7 @@ export class UserController {
   getUser(@Param("id", ValidateMongoId) id: string) {
     return this.userService.getUser(id);
   }
+
   @Auth()
   @Post("upload-material")
   async uploadMaterial(
