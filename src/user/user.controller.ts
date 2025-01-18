@@ -125,31 +125,59 @@ export class UserController {
     return this.userService.getUser(id);
   }
 
-  @Auth()
-  @Post("upload-material")
-  async uploadMaterial(
-    @Body() createMaterialDto: CreateMaterialDto,
-    @Req() req: Request
-  ) {
-    const userId = req.user?.id; // Assuming user data is attached to the request
-    if (!userId) {
-      throw new Error("User is not authenticated");
-    }
-    const {
-      name,
-      description,
-      fileUrl,
-      academicLevel,
-      semester,
-      materialType,
-    } = createMaterialDto;
+  // @Auth()
+  // @Post("upload-material")
+  // async uploadMaterial(
+  //   @Body() createMaterialDto: CreateMaterialDto,
+  //   @Req() req: Request
+  // ) {
+  //   const userId = req.user?.id; // Assuming user data is attached to the request
+  //   if (!userId) {
+  //     throw new Error("User is not authenticated");
+  //   }
+  //   const {
+  //     name,
+  //     description,
+  //     fileUrl,
+  //     academicLevel,
+  //     semester,
+  //     materialType,
+  //   } = createMaterialDto;
 
-    const material = await this.materialService.create(
-      { name, description, fileUrl, academicLevel, semester, materialType },
-      userId
-    );
-    return material;
+  //   const material = await this.materialService.create(
+  //     { name, description, fileUrl, academicLevel, semester, materialType },
+  //     userId
+  //   );
+  //   return material;
+  // }
+
+  @Auth()
+@Post("upload-material")
+async uploadMaterial(
+  @Body() createMaterialDto: CreateMaterialDto,
+  @Req() req: Request
+) {
+  const userId = req.user?.id; // Assuming user data is attached to the request
+  if (!userId) {
+    throw new Error("User is not authenticated");
   }
+  const {
+    name,
+    description,
+    fileUrl,
+    academicLevel,
+    semester,
+    materialType,
+    status = MaterialStatus.PENDING, // Default to PENDING if not provided
+  } = createMaterialDto;
+
+  const material = await this.materialService.create(
+    { name, description, fileUrl, academicLevel, semester, materialType, status },
+    userId
+  );
+  return material;
+}
+
 
   @Auth()
   @Put("/:id")

@@ -52,6 +52,10 @@ export class CreateMaterialDto {
   comment?: string;
 
   @IsString()
+  @IsOptional()
+  status?: string;
+
+  @IsString()
   @IsNotEmpty()
   fileUrl: string;
 
