@@ -45,17 +45,15 @@ export declare class UserService {
     createUser(createUserDto: CreateUserDto): Promise<{
         user: User;
     }>;
-    getUser(id: string): Promise<{
-        user: import("mongoose").Document<unknown, {}, UserDocument> & import("mongoose").Document<unknown, {}, User> & User & {
-            _id: import("mongoose").Types.ObjectId;
-        } & {
-            matchPassword: (password: string) => Promise<boolean>;
-            getSignedJwtToken: () => string;
-            getResetPasswordToken: () => string;
-        } & Required<{
-            _id: import("mongoose").Types.ObjectId;
-        }>;
-    }>;
+    getUser(id: string): Promise<import("mongoose").Document<unknown, {}, UserDocument> & import("mongoose").Document<unknown, {}, User> & User & {
+        _id: import("mongoose").Types.ObjectId;
+    } & {
+        matchPassword: (password: string) => Promise<boolean>;
+        getSignedJwtToken: () => string;
+        getResetPasswordToken: () => string;
+    } & Required<{
+        _id: import("mongoose").Types.ObjectId;
+    }>>;
     updateUser(id: string, dto: UpdateUserDto, currentUser: UserDocument): Promise<{
         user: import("mongoose").Document<unknown, {}, UserDocument> & import("mongoose").Document<unknown, {}, User> & User & {
             _id: import("mongoose").Types.ObjectId;

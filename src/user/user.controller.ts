@@ -120,11 +120,10 @@ export class UserController {
     return this.userService.createUser(dto);
   }
 
-  @Get("/:id")
-  getUser(@Param("id", ValidateMongoId) id: string) {
+  @Get(":id")
+  getUser(@Param("id", new ValidateMongoId()) id: string) {
     return this.userService.getUser(id);
   }
-
   // @Auth()
   // @Post("upload-material")
   // async uploadMaterial(

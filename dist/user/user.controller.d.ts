@@ -54,17 +54,15 @@ export declare class UserController {
     createUser(dto: CreateUserDto): Promise<{
         user: import("./user.schema").User;
     }>;
-    getUser(id: string): Promise<{
-        user: import("mongoose").Document<unknown, {}, UserDocument> & import("mongoose").Document<unknown, {}, import("./user.schema").User> & import("./user.schema").User & {
-            _id: import("mongoose").Types.ObjectId;
-        } & {
-            matchPassword: (password: string) => Promise<boolean>;
-            getSignedJwtToken: () => string;
-            getResetPasswordToken: () => string;
-        } & Required<{
-            _id: import("mongoose").Types.ObjectId;
-        }>;
-    }>;
+    getUser(id: string): Promise<import("mongoose").Document<unknown, {}, UserDocument> & import("mongoose").Document<unknown, {}, import("./user.schema").User> & import("./user.schema").User & {
+        _id: import("mongoose").Types.ObjectId;
+    } & {
+        matchPassword: (password: string) => Promise<boolean>;
+        getSignedJwtToken: () => string;
+        getResetPasswordToken: () => string;
+    } & Required<{
+        _id: import("mongoose").Types.ObjectId;
+    }>>;
     uploadMaterial(createMaterialDto: CreateMaterialDto, req: Request): Promise<Material>;
     updateUser(id: string, dto: UpdateUserDto, user: UserDocument): Promise<{
         user: import("mongoose").Document<unknown, {}, UserDocument> & import("mongoose").Document<unknown, {}, import("./user.schema").User> & import("./user.schema").User & {

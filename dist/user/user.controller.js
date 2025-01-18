@@ -77,8 +77,8 @@ let UserController = class UserController {
         if (!userId) {
             throw new Error("User is not authenticated");
         }
-        const { name, description, fileUrl, academicLevel, semester, materialType, } = createMaterialDto;
-        const material = await this.materialService.create({ name, description, fileUrl, academicLevel, semester, materialType }, userId);
+        const { name, description, fileUrl, academicLevel, semester, materialType, status = create_materials_dto_1.MaterialStatus.PENDING, } = createMaterialDto;
+        const material = await this.materialService.create({ name, description, fileUrl, academicLevel, semester, materialType, status }, userId);
         return material;
     }
     updateUser(id, dto, user) {
@@ -224,8 +224,8 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], UserController.prototype, "createUser", null);
 __decorate([
-    (0, common_1.Get)("/:id"),
-    __param(0, (0, common_1.Param)("id", validate_mongoId_1.ValidateMongoId)),
+    (0, common_1.Get)(":id"),
+    __param(0, (0, common_1.Param)("id", new validate_mongoId_1.ValidateMongoId())),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", void 0)

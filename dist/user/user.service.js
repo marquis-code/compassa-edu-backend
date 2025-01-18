@@ -42,11 +42,13 @@ let UserService = class UserService {
         return { user: savedUser };
     }
     async getUser(id) {
-        const user = await this.User.findById(id).populate('wallet').exec();
-        ;
-        if (!user)
+        console.log(id, 'user id here');
+        const user = await this.User.findById(id).exec();
+        console.log(user);
+        if (!user) {
             throw new common_1.NotFoundException(["No user found with the entered ID"]);
-        return { user };
+        }
+        return user;
     }
     async updateUser(id, dto, currentUser) {
         const user = await this.User.findById(id);

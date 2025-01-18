@@ -36,6 +36,7 @@ export declare class CreateMaterialDto {
     name: string;
     description: string;
     comment?: string;
+    status?: string;
     fileUrl: string;
     academicLevel: AcademicLevel;
     semester: Semester;

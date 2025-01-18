@@ -65,12 +65,15 @@ export class UserService {
   }
 
   async getUser(id: string) {
-    const user = await this.User.findById(id).populate('wallet').exec();;
-
-    if (!user)
+    console.log(id, 'user id here')
+    const user = await this.User.findById(id).exec();
+    console.log(user)
+  
+    if (!user) {
       throw new NotFoundException(["No user found with the entered ID"]);
-
-    return { user };
+    }
+  
+    return user; // Return the user directly
   }
 
   async updateUser(id: string, dto: UpdateUserDto, currentUser: UserDocument) {
