@@ -139,33 +139,55 @@ export class MaterialService {
     return this.materialModel.find(filters).exec();
   }
 
+  // async getAllMaterials(query: any): Promise<Material[]> {
+  //   const filters: any = {};
+
+  //   if (query.academicLevel) {
+  //     filters.academicLevel = query.academicLevel;
+  //   }
+
+  //   if (query.semester) {
+  //     filters.semester = query.semester;
+  //   }
+
+  //   if (query.materialType) {
+  //     filters.materialType = query.materialType;
+  //   }
+
+  //   if (query.status) {
+  //     filters.status = query.status
+  //   }
+
+  //   return this.materialModel.find(filters).exec();
+  // }
+
   async getAllMaterials(query: any): Promise<Material[]> {
     const filters: any = {};
-
+  
     if (query.academicLevel) {
       filters.academicLevel = query.academicLevel;
     }
-
+  
     if (query.semester) {
       filters.semester = query.semester;
     }
-
+  
     if (query.materialType) {
       filters.materialType = query.materialType;
     }
-
+  
     if (query.status) {
-      filters.status = query.status
+      filters.status = query.status;
     }
-
-    return this.materialModel.find(filters).exec();
+  
+    return this.materialModel.find(filters).populate('user', '-password -__v').exec();
   }
+
+  
 
   async countMaterialsByUser(userId: string): Promise<number> {
     return this.materialModel.countDocuments({ user: userId });
   }
-
-
 
   // Find material by ID
   async findById(materialId: string): Promise<Material> {

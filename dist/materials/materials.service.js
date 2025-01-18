@@ -118,7 +118,7 @@ let MaterialService = class MaterialService {
         if (query.status) {
             filters.status = query.status;
         }
-        return this.materialModel.find(filters).exec();
+        return this.materialModel.find(filters).populate('user', '-password -__v').exec();
     }
     async countMaterialsByUser(userId) {
         return this.materialModel.countDocuments({ user: userId });
