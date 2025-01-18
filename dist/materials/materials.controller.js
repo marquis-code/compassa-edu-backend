@@ -54,6 +54,7 @@ let MaterialsController = class MaterialsController {
     }
     async findOne(id, req) {
         try {
+            console.log(id, req.user.id, 'ids here');
             const material = await this.materialService.findOne(id, req.user.id);
             return { success: true, data: material };
         }
@@ -101,7 +102,7 @@ __decorate([
 ], MaterialsController.prototype, "findAll", null);
 __decorate([
     (0, common_1.Get)('user/:userId'),
-    __param(0, (0, common_1.Query)('userId')),
+    __param(0, (0, common_1.Param)('userId')),
     __param(1, (0, common_1.Req)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String, Object]),

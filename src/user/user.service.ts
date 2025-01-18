@@ -64,16 +64,30 @@ export class UserService {
     return { user: savedUser };
   }
 
+  // async getUser(id: string) {
+  //   console.log(id, 'user id here')
+  //   const user = await this.User.findById(id).exec();
+  //   console.log(user)
+  
+  //   if (!user) {
+  //     throw new NotFoundException(["No user found with the entered ID"]);
+  //   }
+  
+  //   return user; // Return the user directly
+  // }
+
   async getUser(id: string) {
-    console.log(id, 'user id here')
-    const user = await this.User.findById(id).exec();
-    console.log(user)
+    console.log(id, 'user id here');
+    const user = await this.User.findById(id)
+      .populate('uploadedMaterials') // Populate the uploadedMaterials field with related documents
+      .exec();
+    console.log(user);
   
     if (!user) {
       throw new NotFoundException(["No user found with the entered ID"]);
     }
   
-    return user; // Return the user directly
+    return user; // Return the user object with populated materials
   }
 
   async updateUser(id: string, dto: UpdateUserDto, currentUser: UserDocument) {

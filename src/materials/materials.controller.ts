@@ -53,31 +53,55 @@ export class MaterialsController {
     }
   }
 
-  @Get('user/:userId')
-  async findAllUserActivities(@Query('userId') userId: string, @Req() req) {
-    try {
-      // Check if userId is provided
-      if (!userId) {
-        throw new HttpException(
-          'User ID is required to fetch activities',
-          HttpStatus.BAD_REQUEST,
-        );
-      }
+  // @Get('user/:userId')
+  // async findAllUserActivities(@Query('userId') userId: string, @Req() req) {
+  //   try {
+  //     // Check if userId is provided
+  //     if (!userId) {
+  //       throw new HttpException(
+  //         'User ID is required to fetch activities',
+  //         HttpStatus.BAD_REQUEST,
+  //       );
+  //     }
 
-      // Fetch all activities for the given user
-      const activities = await this.materialService.findByUserId(userId);
-      return { success: true, data: activities };
-    } catch (error) {
+  //     // Fetch all activities for the given user
+  //     const activities = await this.materialService.findByUserId(userId);
+  //     return { success: true, data: activities };
+  //   } catch (error) {
+  //     throw new HttpException(
+  //       error.message || 'Error fetching activities',
+  //       HttpStatus.INTERNAL_SERVER_ERROR,
+  //     );
+  //   }
+  // }
+
+  @Get('user/:userId')
+async findAllUserActivities(@Param('userId') userId: string, @Req() req) {
+  try {
+    // Check if userId is provided
+    if (!userId) {
       throw new HttpException(
-        error.message || 'Error fetching activities',
-        HttpStatus.INTERNAL_SERVER_ERROR,
+        'User ID is required to fetch activities',
+        HttpStatus.BAD_REQUEST,
       );
     }
+
+    // Fetch all activities for the given user
+    const activities = await this.materialService.findByUserId(userId);
+    return { success: true, data: activities };
+  } catch (error) {
+    throw new HttpException(
+      error.message || 'Error fetching activities',
+      HttpStatus.INTERNAL_SERVER_ERROR,
+    );
   }
+}
+
 
   @Get(':id')
   async findOne(@Param('id') id: string, @Req() req) {
     try {
+      console.log(id, req.user.id, 'ids here')
       const material = await this.materialService.findOne(id, req.user.id);
       return { success: true, data: material };
     } catch (error) {

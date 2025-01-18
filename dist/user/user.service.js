@@ -43,7 +43,9 @@ let UserService = class UserService {
     }
     async getUser(id) {
         console.log(id, 'user id here');
-        const user = await this.User.findById(id).exec();
+        const user = await this.User.findById(id)
+            .populate('uploadedMaterials')
+            .exec();
         console.log(user);
         if (!user) {
             throw new common_1.NotFoundException(["No user found with the entered ID"]);
