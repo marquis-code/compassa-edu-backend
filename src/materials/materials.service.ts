@@ -182,6 +182,7 @@ export class MaterialService {
   }
 
   async findMaterialById(materialId: string): Promise<Material> {
+    console.log('Got it from here', materialId)
     const material = await this.materialModel.findById(materialId);
     if (!material) {
       throw new NotFoundException(`Material with ID ${materialId} not found`);

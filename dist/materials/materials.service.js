@@ -130,6 +130,7 @@ let MaterialService = class MaterialService {
         return this.materialModel.findByIdAndUpdate(materialId, { status: 'approved' }, { new: true }).exec();
     }
     async findMaterialById(materialId) {
+        console.log('Got it from here', materialId);
         const material = await this.materialModel.findById(materialId);
         if (!material) {
             throw new common_1.NotFoundException(`Material with ID ${materialId} not found`);

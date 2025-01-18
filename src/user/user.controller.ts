@@ -244,48 +244,96 @@ async batchApproveMaterials(
   };
 }
 
+// @Auth()
+// @Post("/update-material-status")
+// async updateMaterialStatus(
+// 	materialId: string,
+// 	userId: string,
+// 	status: MaterialStatus, // Use the enum here
+// 	comment?: string, // Optional comment for rejected status
+//   ): Promise<{ message: string; material: Material }> {
+// 	// Fetch the material using the service
+//   console.log(materialId, 'material id from controller')
+// 	const material = await this.materialService.findMaterialById(materialId);
+  
+// 	// Check if the material already has the specified status
+// 	if (material.status === status) {
+// 	  return {
+// 		message: `Material already has the status '${status}'`,
+// 		material,
+// 	  };
+// 	}
+  
+// 	// Prepare the update payload
+// 	const updatePayload: Partial<Material> = { status };
+  
+// 	// If the material is rejected, ensure a comment is provided
+// 	if (status === MaterialStatus.REJECTED) {
+// 	  if (!comment || comment.trim() === '') {
+// 		throw new BadRequestException('A comment is required when rejecting a material');
+// 	  }
+// 	  updatePayload['comment'] = comment;
+// 	}
+  
+// 	// Update the material using the service
+// 	const updatedMaterial = await this.materialService.updateMaterialById(materialId, updatePayload);
+  
+// 	if (status === MaterialStatus.APPROVED) {
+// 	  // Add points to the user only when the material is approved
+// 	  await this.userService.addPointsToUser(userId, 10);
+// 	}
+  
+// 	// Return success message and updated material
+// 	return {
+// 	  message: `Material status has been updated to '${status}' successfully`,
+// 	  material: updatedMaterial,
+// 	};
+//   }
 @Auth()
 @Post("/update-material-status")
 async updateMaterialStatus(
-	materialId: string,
-	userId: string,
-	status: MaterialStatus, // Use the enum here
-	comment?: string, // Optional comment for rejected status
-  ): Promise<{ message: string; material: Material }> {
-	// Fetch the material using the service
-	const material = await this.materialService.findMaterialById(materialId);
-  
-	// Check if the material already has the specified status
-	if (material.status === status) {
-	  return {
-		message: `Material already has the status '${status}'`,
-		material,
-	  };
-	}
-  
-	// Prepare the update payload
-	const updatePayload: Partial<Material> = { status };
-  
-	// If the material is rejected, ensure a comment is provided
-	if (status === MaterialStatus.REJECTED) {
-	  if (!comment || comment.trim() === '') {
-		throw new BadRequestException('A comment is required when rejecting a material');
-	  }
-	  updatePayload['comment'] = comment;
-	}
-  
-	// Update the material using the service
-	const updatedMaterial = await this.materialService.updateMaterialById(materialId, updatePayload);
-  
-	if (status === MaterialStatus.APPROVED) {
-	  // Add points to the user only when the material is approved
-	  await this.userService.addPointsToUser(userId, 10);
-	}
-  
-	// Return success message and updated material
-	return {
-	  message: `Material status has been updated to '${status}' successfully`,
-	  material: updatedMaterial,
-	};
+  @Query("materialId") materialId: string,
+  @Query("userId") userId: string,
+  @Query("status") status: MaterialStatus, // Use the enum here
+  @Query("comment") comment?: string // Optional comment for rejected status
+): Promise<{ message: string; material: Material }> {
+  console.log(materialId, 'material id from controller');
+
+  // Fetch the material using the service
+  const material = await this.materialService.findMaterialById(materialId);
+
+  // Check if the material already has the specified status
+  if (material.status === status) {
+    return {
+      message: `Material already has the status '${status}'`,
+      material,
+    };
   }
+
+  // Prepare the update payload
+  const updatePayload: Partial<Material> = { status };
+
+  // If the material is rejected, ensure a comment is provided
+  if (status === MaterialStatus.REJECTED) {
+    if (!comment || comment.trim() === '') {
+      throw new BadRequestException('A comment is required when rejecting a material');
+    }
+    updatePayload['comment'] = comment;
+  }
+
+  // Update the material using the service
+  const updatedMaterial = await this.materialService.updateMaterialById(materialId, updatePayload);
+
+  if (status === MaterialStatus.APPROVED) {
+    // Add points to the user only when the material is approved
+    await this.userService.addPointsToUser(userId, 10);
+  }
+
+  // Return success message and updated material
+  return {
+    message: `Material status has been updated to '${status}' successfully`,
+    material: updatedMaterial,
+  };
+}
+
 }

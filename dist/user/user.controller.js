@@ -144,6 +144,7 @@ let UserController = class UserController {
         };
     }
     async updateMaterialStatus(materialId, userId, status, comment) {
+        console.log(materialId, 'material id from controller');
         const material = await this.materialService.findMaterialById(materialId);
         if (material.status === status) {
             return {
@@ -268,6 +269,10 @@ __decorate([
 __decorate([
     (0, auth_decorator_1.Auth)(),
     (0, common_1.Post)("/update-material-status"),
+    __param(0, (0, common_1.Query)("materialId")),
+    __param(1, (0, common_1.Query)("userId")),
+    __param(2, (0, common_1.Query)("status")),
+    __param(3, (0, common_1.Query)("comment")),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String, String, String, String]),
     __metadata("design:returntype", Promise)

@@ -20,15 +20,7 @@ async function bootstrap() {
     });
     swagger_1.SwaggerModule.setup("api", app, document);
     const corsOptions = {
-        origin: (origin, callback) => {
-            const whitelist = ['https://www.sfwl.org', 'http://localhost:3000'];
-            if (!origin || whitelist.includes(origin)) {
-                callback(null, true);
-            }
-            else {
-                callback(new Error('Not allowed by CORS'));
-            }
-        },
+        origin: "*",
         methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
         allowedHeaders: "Content-Type, Accept, Authorization",
         credentials: true,
