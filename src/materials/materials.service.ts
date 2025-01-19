@@ -238,6 +238,14 @@ export class MaterialService {
     if (query.status) {
       filters.status = query.status;
     }
+
+    if (query.caategory) {
+      filters.category = query.category;
+    }
+
+    if (query.session) {
+      filters.session = query.session;
+    }
   
     return this.materialModel.find(filters).populate('user', '-password -__v').exec();
   }
@@ -357,5 +365,22 @@ export class MaterialService {
       details: results,
     };
   }
+
+  async findByCategoryId(categoryId: string) {
+    return this.materialModel
+      .find({ category: categoryId })
+      .populate('session') // Optionally populate related fields
+      .populate('category')
+      .exec();
+  }
+
+  async findBySessionId(sessionId: string) {
+    return this.materialModel
+      .find({ session: sessionId })
+      .populate('session') // Optionally populate related fields
+      .populate('category')
+      .exec();
+  }
+
 
 }

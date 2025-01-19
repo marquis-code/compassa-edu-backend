@@ -247,6 +247,32 @@ async findAllUserActivities(@Param('userId') userId: string, @Req() req) {
     }
   }
 
+  @Get('by-category/:categoryId')
+  async getMaterialsByCategory(@Param('categoryId') categoryId: string) {
+    try {
+      const materials = await this.materialService.findByCategoryId(categoryId);
+      return { success: true, data: materials };
+    } catch (error) {
+      throw new HttpException(
+        error.message || 'Error fetching materials by category',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  @Get('by-session/:sessionId')
+  async getMaterialsBySession(@Param('sessionId') sessionId: string) {
+    try {
+      const materials = await this.materialService.findBySessionId(sessionId);
+      return { success: true, data: materials };
+    } catch (error) {
+      throw new HttpException(
+        error.message || 'Error fetching materials by session',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
 
   @Patch('batch-update-status')
   async batchUpdateMaterialStatus(
