@@ -68,4 +68,26 @@ export class MessagesService {
       .populate('sender', 'username')
       .sort({ createdAt: 1 });
   }
+
+  async getUnreadMessages(groupId: string, userId: string): Promise<Message[]> {
+    return this.messageModel
+      .find({
+        group: new Types.ObjectId(groupId), // Ensure the groupId is an ObjectId
+        'readBy.user': { $ne: new Types.ObjectId(userId) }, // Exclude messages read by the user
+      })
+      .populate('sender', 'username') // Optionally populate sender details
+      .sort({ createdAt: 1 }); // Sort by creation time
+  }
+
+  async markMessagesAsRead(groupId: string, userId: string): Promise<void> {
+    await this.messageModel.updateMany(
+      {
+        group: new Types.ObjectId(groupId),
+        'readBy.user': { $ne: new Types.ObjectId(userId) }, // Only update unread messages
+      },
+      {
+        $push: { readBy: { user: new Types.ObjectId(userId), readAt: new Date() } },
+      }
+    );
+  }
 }

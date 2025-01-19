@@ -42,6 +42,9 @@ export class Message extends Document {
 
   @Prop({ type: String, enum: ['text', 'image', 'document', 'video', 'audio'], default: 'text' })
   type: 'text' | 'image' | 'document' | 'video' | 'audio'; // Added 'video' and 'audio'
+
+  @Prop({ type: [{ user: { type: Types.ObjectId, ref: 'User' }, readAt: Date }], default: [] })
+  readBy: { user: Types.ObjectId; readAt: Date }[]; // Track which users have read the message
 }
 
 export const MessageSchema = SchemaFactory.createForClass(Message);

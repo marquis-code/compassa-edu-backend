@@ -19,4 +19,14 @@ export class MessagesController {
   findGroupMessages(@Param('groupId') groupId: string) {
     return this.messagesService.findGroupMessages(groupId);
   }
+
+  @Get('group/:groupId/unread')
+  getUnreadMessages(@Param('groupId') groupId: string, @Request() req) {
+    return this.messagesService.getUnreadMessages(groupId, req.user.id);
+  }
+
+  @Post('group/:groupId/mark-read')
+markMessagesAsRead(@Param('groupId') groupId: string, @Request() req) {
+  return this.messagesService.markMessagesAsRead(groupId, req.user.id);
+}
 }
