@@ -12,7 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.GroupSchema = exports.Group = void 0;
 const mongoose_1 = require("@nestjs/mongoose");
 const mongoose_2 = require("mongoose");
-let Group = class Group extends mongoose_2.Document {
+let Group = class Group {
 };
 exports.Group = Group;
 __decorate([
@@ -20,21 +20,25 @@ __decorate([
     __metadata("design:type", String)
 ], Group.prototype, "name", void 0);
 __decorate([
-    (0, mongoose_1.Prop)({ required: true }),
+    (0, mongoose_1.Prop)(),
     __metadata("design:type", String)
 ], Group.prototype, "description", void 0);
 __decorate([
-    (0, mongoose_1.Prop)({ default: 'public' }),
-    __metadata("design:type", String)
-], Group.prototype, "status", void 0);
-__decorate([
-    (0, mongoose_1.Prop)({ type: mongoose_2.Types.ObjectId, ref: 'User', required: true }),
+    (0, mongoose_1.Prop)({ required: true, type: mongoose_2.Types.ObjectId, ref: 'User' }),
     __metadata("design:type", mongoose_2.Types.ObjectId)
 ], Group.prototype, "creator", void 0);
 __decorate([
     (0, mongoose_1.Prop)({ type: [{ type: mongoose_2.Types.ObjectId, ref: 'User' }] }),
     __metadata("design:type", Array)
 ], Group.prototype, "members", void 0);
+__decorate([
+    (0, mongoose_1.Prop)({ type: [{ type: mongoose_2.Types.ObjectId, ref: 'Message' }] }),
+    __metadata("design:type", Array)
+], Group.prototype, "messages", void 0);
+__decorate([
+    (0, mongoose_1.Prop)({ type: String, enum: ['public', 'private'], default: 'public' }),
+    __metadata("design:type", String)
+], Group.prototype, "status", void 0);
 exports.Group = Group = __decorate([
     (0, mongoose_1.Schema)({ timestamps: true })
 ], Group);

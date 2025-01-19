@@ -24,19 +24,22 @@
 /// <reference types="mongoose/types/inferschematype" />
 /// <reference types="mongoose/types/inferrawdoctype" />
 import { Model, Types } from 'mongoose';
-import { Group } from './group.schema';
+import { GroupDocument } from './group.schema';
 import { CreateGroupDto, UpdateGroupDto } from './dto/group.dto';
 import { WebSocketGateway } from '../gateways/websocket.gateway';
+import { PopulatedGroup } from '../interfaces/populated-group.interface';
 export declare class GroupsService {
     private groupModel;
     private readonly wsGateway;
-    constructor(groupModel: Model<Group>, wsGateway: WebSocketGateway);
-    create(createGroupDto: CreateGroupDto, userId: Types.ObjectId): Promise<Group>;
-    findAll(status?: 'public' | 'private'): Promise<Group[]>;
-    findOne(id: string): Promise<Group>;
-    update(id: string, updateGroupDto: UpdateGroupDto, userId: Types.ObjectId): Promise<Group>;
+    constructor(groupModel: Model<GroupDocument>, wsGateway: WebSocketGateway);
+    create(createGroupDto: CreateGroupDto, userId: Types.ObjectId): Promise<GroupDocument>;
+    findAll(status?: 'public' | 'private'): Promise<PopulatedGroup[]>;
+    findOne(id: string): Promise<PopulatedGroup>;
+    update(id: string, updateGroupDto: UpdateGroupDto, userId: Types.ObjectId): Promise<PopulatedGroup>;
     delete(id: string, userId: Types.ObjectId): Promise<void>;
-    joinGroup(groupId: string, userId: Types.ObjectId): Promise<Group>;
+    joinGroup(groupId: string, userId: Types.ObjectId): Promise<PopulatedGroup>;
     leaveGroup(groupId: string, userId: Types.ObjectId): Promise<void>;
-    joinByUserId(groupId: string, userId: string): Promise<Group>;
+    joinByUserId(groupId: string, userId: string): Promise<PopulatedGroup>;
+    getUserGroupsWithMessages(userId: string): Promise<PopulatedGroup[]>;
+    private mapToPopulatedGroup;
 }

@@ -29,20 +29,35 @@ let GroupsService = class GroupsService {
     }
     async findAll(status) {
         const query = status ? { status } : {};
-        return this.groupModel.find(query).populate('members', 'username email');
+        const groups = await this.groupModel
+            .find(query)
+            .populate('members', 'username email')
+            .lean();
+        return groups.map(group => this.mapToPopulatedGroup(group));
     }
     async findOne(id) {
-        const group = await this.groupModel.findById(id).populate('members', 'username email');
-        if (!group)
+        if (!mongoose_2.Types.ObjectId.isValid(id)) {
+            throw new common_1.NotFoundException('Invalid group ID');
+        }
+        const group = await this.groupModel
+            .findById(id)
+            .populate('members', 'username email')
+            .lean();
+        if (!group) {
             throw new common_1.NotFoundException('Group not found');
-        return group;
+        }
+        return this.mapToPopulatedGroup(group);
     }
     async update(id, updateGroupDto, userId) {
         const group = await this.findOne(id);
         if (group.creator.toString() !== userId.toString()) {
             throw new common_1.ForbiddenException('Only group creator can update group');
         }
-        return this.groupModel.findByIdAndUpdate(id, updateGroupDto, { new: true });
+        const updatedGroup = await this.groupModel
+            .findByIdAndUpdate(id, updateGroupDto, { new: true })
+            .populate('members', 'username email')
+            .lean();
+        return this.mapToPopulatedGroup(updatedGroup);
     }
     async delete(id, userId) {
         const group = await this.findOne(id);
@@ -56,31 +71,97 @@ let GroupsService = class GroupsService {
         if (group.status === 'private') {
             throw new common_1.ForbiddenException('Cannot join private group without invitation');
         }
-        if (!group.members.includes(userId)) {
-            group.members.push(userId);
-            await group.save();
+        const isMember = group.members.some(member => member._id.equals(userId));
+        if (!isMember) {
+            await this.groupModel.findByIdAndUpdate(groupId, { $addToSet: { members: userId } });
         }
-        return group;
+        return this.findOne(groupId);
     }
     async leaveGroup(groupId, userId) {
         const group = await this.findOne(groupId);
         if (group.creator.toString() === userId.toString()) {
             throw new common_1.ForbiddenException('Group creator cannot leave the group');
         }
-        group.members = group.members.filter(member => member.toString() !== userId.toString());
-        await group.save();
+        await this.groupModel.findByIdAndUpdate(groupId, { $pull: { members: userId } });
     }
     async joinByUserId(groupId, userId) {
-        const group = await this.groupModel.findById(groupId);
-        if (!group) {
-            throw new common_1.NotFoundException('Group not found');
+        if (!mongoose_2.Types.ObjectId.isValid(userId)) {
+            throw new common_1.NotFoundException('Invalid user ID');
         }
         const userObjectId = new mongoose_2.Types.ObjectId(userId);
-        if (!group.members.some(member => new mongoose_2.Types.ObjectId(member).equals(userObjectId))) {
-            group.members.push(userObjectId);
-            await group.save();
+        const group = await this.findOne(groupId);
+        const isMember = group.members.some(member => member._id.equals(userObjectId));
+        if (!isMember) {
+            await this.groupModel.findByIdAndUpdate(groupId, { $addToSet: { members: userObjectId } });
         }
-        return group;
+        return this.findOne(groupId);
+    }
+    async getUserGroupsWithMessages(userId) {
+        if (!mongoose_2.Types.ObjectId.isValid(userId)) {
+            throw new common_1.NotFoundException('Invalid user ID');
+        }
+        const userObjectId = new mongoose_2.Types.ObjectId(userId);
+        const groups = await this.groupModel
+            .find({ members: userObjectId })
+            .populate('members', 'username email')
+            .populate({
+            path: 'messages',
+            populate: [
+                {
+                    path: 'sender',
+                    model: 'User',
+                    select: 'username email',
+                },
+                {
+                    path: 'readBy.user',
+                    model: 'User',
+                    select: 'username email',
+                },
+            ],
+        })
+            .lean();
+        if (!groups || groups.length === 0) {
+            throw new common_1.NotFoundException('No groups found for the user');
+        }
+        return groups.map(group => this.mapToPopulatedGroup(group));
+    }
+    mapToPopulatedGroup(group) {
+        var _a;
+        return {
+            _id: group._id,
+            name: group.name,
+            description: group.description,
+            creator: group.creator,
+            status: group.status,
+            members: group.members.map((member) => ({
+                _id: member._id,
+                username: member.username,
+                email: member.email,
+            })),
+            messages: ((_a = group.messages) === null || _a === void 0 ? void 0 : _a.map((message) => ({
+                _id: message._id,
+                content: message.content,
+                type: message.type,
+                sender: {
+                    _id: message.sender._id,
+                    username: message.sender.username,
+                    email: message.sender.email,
+                },
+                attachments: message.attachments,
+                readBy: message.readBy.map((readBy) => ({
+                    user: {
+                        _id: readBy.user._id,
+                        username: readBy.user.username,
+                        email: readBy.user.email,
+                    },
+                    readAt: readBy.readAt,
+                })),
+                createdAt: message.createdAt,
+                updatedAt: message.updatedAt,
+            }))) || [],
+            createdAt: group.createdAt,
+            updatedAt: group.updatedAt,
+        };
     }
 };
 exports.GroupsService = GroupsService;

@@ -36,6 +36,23 @@ let MessagesService = class MessagesService {
             .populate('sender', 'username')
             .sort({ createdAt: 1 });
     }
+    async getUnreadMessages(groupId, userId) {
+        return this.messageModel
+            .find({
+            group: new mongoose_2.Types.ObjectId(groupId),
+            'readBy.user': { $ne: new mongoose_2.Types.ObjectId(userId) },
+        })
+            .populate('sender', 'username')
+            .sort({ createdAt: 1 });
+    }
+    async markMessagesAsRead(groupId, userId) {
+        await this.messageModel.updateMany({
+            group: new mongoose_2.Types.ObjectId(groupId),
+            'readBy.user': { $ne: new mongoose_2.Types.ObjectId(userId) },
+        }, {
+            $push: { readBy: { user: new mongoose_2.Types.ObjectId(userId), readAt: new Date() } },
+        });
+    }
 };
 exports.MessagesService = MessagesService;
 exports.MessagesService = MessagesService = __decorate([

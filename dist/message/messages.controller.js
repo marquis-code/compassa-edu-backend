@@ -27,6 +27,12 @@ let MessagesController = class MessagesController {
     findGroupMessages(groupId) {
         return this.messagesService.findGroupMessages(groupId);
     }
+    getUnreadMessages(groupId, req) {
+        return this.messagesService.getUnreadMessages(groupId, req.user.id);
+    }
+    markMessagesAsRead(groupId, req) {
+        return this.messagesService.markMessagesAsRead(groupId, req.user.id);
+    }
 };
 exports.MessagesController = MessagesController;
 __decorate([
@@ -44,6 +50,22 @@ __decorate([
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", void 0)
 ], MessagesController.prototype, "findGroupMessages", null);
+__decorate([
+    (0, common_1.Get)('group/:groupId/unread'),
+    __param(0, (0, common_1.Param)('groupId')),
+    __param(1, (0, common_1.Request)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:returntype", void 0)
+], MessagesController.prototype, "getUnreadMessages", null);
+__decorate([
+    (0, common_1.Post)('group/:groupId/mark-read'),
+    __param(0, (0, common_1.Param)('groupId')),
+    __param(1, (0, common_1.Request)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:returntype", void 0)
+], MessagesController.prototype, "markMessagesAsRead", null);
 exports.MessagesController = MessagesController = __decorate([
     (0, common_1.Controller)('messages'),
     (0, common_1.UseGuards)(auth_guard_1.AuthGuard),

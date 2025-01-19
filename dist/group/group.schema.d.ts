@@ -24,19 +24,21 @@
 /// <reference types="mongoose/types/inferschematype" />
 /// <reference types="mongoose/types/inferrawdoctype" />
 import { Document, Types } from 'mongoose';
-export declare class Group extends Document {
+export type GroupDocument = Group & Document;
+export declare class Group {
     name: string;
     description: string;
-    status: 'public' | 'private';
     creator: Types.ObjectId;
     members: Types.ObjectId[];
+    messages: Types.ObjectId[];
+    status: 'public' | 'private';
 }
-export declare const GroupSchema: import("mongoose").Schema<Group, import("mongoose").Model<Group, any, any, any, Document<unknown, any, Group> & Group & Required<{
-    _id: unknown;
-}> & {
+export declare const GroupSchema: import("mongoose").Schema<Group, import("mongoose").Model<Group, any, any, any, Document<unknown, any, Group> & Group & {
+    _id: Types.ObjectId;
+} & {
     __v: number;
-}, any>, {}, {}, {}, {}, import("mongoose").DefaultSchemaOptions, Group, Document<unknown, {}, import("mongoose").FlatRecord<Group>> & import("mongoose").FlatRecord<Group> & Required<{
-    _id: unknown;
-}> & {
+}, any>, {}, {}, {}, {}, import("mongoose").DefaultSchemaOptions, Group, Document<unknown, {}, import("mongoose").FlatRecord<Group>> & import("mongoose").FlatRecord<Group> & {
+    _id: Types.ObjectId;
+} & {
     __v: number;
 }>;

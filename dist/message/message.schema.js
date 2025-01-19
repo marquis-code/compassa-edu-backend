@@ -35,6 +35,18 @@ __decorate([
     (0, mongoose_1.Prop)({ type: String, enum: ['text', 'image', 'document', 'video', 'audio'], default: 'text' }),
     __metadata("design:type", String)
 ], Message.prototype, "type", void 0);
+__decorate([
+    (0, mongoose_1.Prop)({
+        type: [
+            {
+                user: { type: mongoose_2.Types.ObjectId, ref: 'User' },
+                readAt: { type: Date },
+            },
+        ],
+        default: [],
+    }),
+    __metadata("design:type", Array)
+], Message.prototype, "readBy", void 0);
 exports.Message = Message = __decorate([
     (0, mongoose_1.Schema)({ timestamps: true })
 ], Message);

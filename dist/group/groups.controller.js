@@ -42,6 +42,9 @@ let GroupsController = class GroupsController {
     joinGroup(groupId, req) {
         return this.groupsService.joinGroup(groupId, req.user.id);
     }
+    getUserGroups(req) {
+        return this.groupsService.getUserGroupsWithMessages(req.user.id);
+    }
 };
 exports.GroupsController = GroupsController;
 __decorate([
@@ -98,6 +101,13 @@ __decorate([
     __metadata("design:paramtypes", [String, Object]),
     __metadata("design:returntype", void 0)
 ], GroupsController.prototype, "joinGroup", null);
+__decorate([
+    (0, common_1.Get)('user-groups'),
+    __param(0, (0, common_1.Request)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", void 0)
+], GroupsController.prototype, "getUserGroups", null);
 exports.GroupsController = GroupsController = __decorate([
     (0, common_1.Controller)('groups'),
     (0, common_1.UseGuards)(auth_guard_1.AuthGuard),

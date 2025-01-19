@@ -23,16 +23,18 @@
 /// <reference types="mongoose/types/virtuals" />
 /// <reference types="mongoose/types/inferschematype" />
 /// <reference types="mongoose/types/inferrawdoctype" />
-import { Model } from 'mongoose';
-import { Message } from './message.schema';
-import { CreateMessageDto } from './dto/message.dto';
-import { WebSocketGateway } from '../gateways/websocket.gateway';
-export declare class MessagesService {
-    private messageModel;
-    private readonly wsGateway;
-    constructor(messageModel: Model<Message>, wsGateway: WebSocketGateway);
-    create(createMessageDto: CreateMessageDto, userId: string): Promise<Message>;
-    findGroupMessages(groupId: string): Promise<Message[]>;
-    getUnreadMessages(groupId: string, userId: string): Promise<Message[]>;
-    markMessagesAsRead(groupId: string, userId: string): Promise<void>;
+import { Types } from 'mongoose';
+import { User } from './user.interface';
+export interface Message {
+    _id: Types.ObjectId;
+    content: string;
+    type: string;
+    sender: User;
+    attachments: string[];
+    readBy: {
+        user: User;
+        readAt: Date;
+    }[];
+    createdAt: Date;
+    updatedAt: Date;
 }

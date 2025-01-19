@@ -43,4 +43,9 @@ export class GroupsController {
   joinGroup(@Param('groupId') groupId: string, @Request() req) {
     return this.groupsService.joinGroup(groupId, req.user.id); // Call the service with groupId and userId
   }
+
+  @Get('user-groups') // Endpoint to fetch the logged-in user's groups
+  getUserGroups(@Request() req) {
+    return this.groupsService.getUserGroupsWithMessages(req.user.id); // Fetch groups the user belongs to
+  }
 }
