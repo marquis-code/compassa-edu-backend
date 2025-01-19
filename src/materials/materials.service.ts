@@ -158,8 +158,16 @@ export class MaterialService {
     }
   }
 
+  // async findByUserId(userId: string): Promise<Material[]> {
+  //   return this.materialModel.find({ user: userId }).exec(); // Filter materials by user ID
+  // }
+
   async findByUserId(userId: string): Promise<Material[]> {
-    return this.materialModel.find({ user: userId }).exec(); // Filter materials by user ID
+    return this.materialModel
+      .find({ user: userId }) // Filter materials by user ID
+      .populate('session') // Populate the Session object
+      .populate('category') // Populate the Category object
+      .exec(); // Execute the query
   }
 
   async approveMaterial(materialId: string, userId: string, status: string): Promise<{ message: string; material: Material }> {

@@ -118,7 +118,11 @@ let MaterialService = class MaterialService {
         }
     }
     async findByUserId(userId) {
-        return this.materialModel.find({ user: userId }).exec();
+        return this.materialModel
+            .find({ user: userId })
+            .populate('session')
+            .populate('category')
+            .exec();
     }
     async approveMaterial(materialId, userId, status) {
         const material = await this.materialModel.findById(materialId);
