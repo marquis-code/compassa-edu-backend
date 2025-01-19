@@ -16,12 +16,14 @@ exports.MaterialService = void 0;
 const common_1 = require("@nestjs/common");
 const mongoose_1 = require("@nestjs/mongoose");
 const mongoose_2 = require("mongoose");
+const user_service_1 = require("../user/user.service");
 const materials_schema_1 = require("./materials.schema");
 const create_materials_dto_1 = require("./dto/create-materials.dto");
-const user_service_1 = require("../user/user.service");
 let MaterialService = class MaterialService {
-    constructor(materialModel, userService) {
+    constructor(materialModel, categoryModel, sessionModel, userService) {
         this.materialModel = materialModel;
+        this.categoryModel = categoryModel;
+        this.sessionModel = sessionModel;
         this.userService = userService;
     }
     async create(createMaterialDto, userId) {
@@ -29,6 +31,50 @@ let MaterialService = class MaterialService {
         const savedMaterial = await createdMaterial.save();
         await this.userService.addUploadedMaterial(userId, savedMaterial._id);
         return savedMaterial;
+    }
+    async batchCreateMaterials(createMaterialsDto, userId) {
+        const materials = createMaterialsDto.map(dto => (Object.assign(Object.assign({}, dto), { user: userId })));
+        return this.materialModel.insertMany(materials);
+    }
+    async createCategory(createCategoryDto) {
+        const category = new this.categoryModel(createCategoryDto);
+        return category.save();
+    }
+    async getCategories() {
+        return this.categoryModel.find().exec();
+    }
+    async updateCategory(id, updateCategoryDto) {
+        const category = await this.categoryModel.findByIdAndUpdate(id, updateCategoryDto, { new: true });
+        if (!category) {
+            throw new common_1.NotFoundException(`Category with ID ${id} not found`);
+        }
+        return category;
+    }
+    async deleteCategory(id) {
+        const result = await this.categoryModel.findByIdAndDelete(id);
+        if (!result) {
+            throw new common_1.NotFoundException(`Category with ID ${id} not found`);
+        }
+    }
+    async createSession(createSessionDto) {
+        const session = new this.sessionModel(createSessionDto);
+        return session.save();
+    }
+    async getSessions() {
+        return this.sessionModel.find().exec();
+    }
+    async updateSession(id, updateSessionDto) {
+        const session = await this.sessionModel.findByIdAndUpdate(id, updateSessionDto, { new: true });
+        if (!session) {
+            throw new common_1.NotFoundException(`Session with ID ${id} not found`);
+        }
+        return session;
+    }
+    async deleteSession(id) {
+        const result = await this.sessionModel.findByIdAndDelete(id);
+        if (!result) {
+            throw new common_1.NotFoundException(`Session with ID ${id} not found`);
+        }
     }
     async findAll(query) {
         const filters = { status: 'approved' };
@@ -200,8 +246,12 @@ exports.MaterialService = MaterialService;
 exports.MaterialService = MaterialService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, mongoose_1.InjectModel)(materials_schema_1.Material.name)),
-    __param(1, (0, common_1.Inject)((0, common_1.forwardRef)(() => user_service_1.UserService))),
+    __param(1, (0, mongoose_1.InjectModel)(materials_schema_1.Category.name)),
+    __param(2, (0, mongoose_1.InjectModel)(materials_schema_1.Session.name)),
+    __param(3, (0, common_1.Inject)((0, common_1.forwardRef)(() => user_service_1.UserService))),
     __metadata("design:paramtypes", [mongoose_2.Model,
+        mongoose_2.Model,
+        mongoose_2.Model,
         user_service_1.UserService])
 ], MaterialService);
 //# sourceMappingURL=materials.service.js.map

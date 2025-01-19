@@ -66,7 +66,7 @@ export declare class UserService {
         }>;
     }>;
     deleteUser(id: string, currentUser: UserDocument): Promise<{}>;
-    uploadMaterial(userId: string, name: string, description: string, fileUrl: string, academicLevel: string, semester: string, materialType: string): Promise<Material>;
+    uploadMaterial(userId: string, name: string, description: string, fileUrl: string, academicLevel: string, semester: string, materialType: string, category: string, session: string): Promise<Material>;
     getApprovedMaterials(query: any): Promise<Material[]>;
     addPointsToUser(userId: string, points: number): Promise<void>;
     addUploadedMaterial(userId: string, materialId: string): Promise<void>;

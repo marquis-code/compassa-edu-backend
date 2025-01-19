@@ -10,6 +10,7 @@ import {
 } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Semester, MaterialType, AcademicLevel } from '../materials/dto/create-materials.dto'
+import { MaterialStatus } from '../materials/dto/create-materials.dto'
 
 // types
 import { Model } from "mongoose";
@@ -141,6 +142,39 @@ export class UserService {
   //   return material;
   // }
 
+// async uploadMaterial(
+//   userId: string,
+//   name: string,
+//   description: string,
+//   fileUrl: string,
+//   academicLevel: string,
+//   semester: string,
+//   materialType: string,
+// ) {
+//   // Validate and cast semester to the Semester enum
+//   if (!Object.values(Semester).includes(semester as Semester)) {
+//     throw new Error(`Invalid semester: ${semester}. Valid options are: ${Object.values(Semester).join(', ')}`);
+//   }
+
+//   // Validate and cast materialType to the MaterialType enum
+//   if (!Object.values(MaterialType).includes(materialType as MaterialType)) {
+//     throw new Error(`Invalid material type: ${materialType}. Valid options are: ${Object.values(MaterialType).join(', ')}`);
+//   }
+
+//   const material = await this.materialService.create(
+//     { 
+//       name, 
+//       description, 
+//       fileUrls, 
+//       academicLevel: academicLevel as AcademicLevel, 
+//       semester: semester as Semester, // Cast to Semester enum
+//       materialType: materialType as MaterialType, // Cast to MaterialType enum
+//     },
+//     userId,
+//   );
+//   return material;
+// }
+
 async uploadMaterial(
   userId: string,
   name: string,
@@ -149,7 +183,12 @@ async uploadMaterial(
   academicLevel: string,
   semester: string,
   materialType: string,
+  category: string,    // Added missing required field
+  session: string,     // Added missing required field
 ) {
+  // Convert single fileUrl to fileUrls array
+  const fileUrls = [fileUrl];
+
   // Validate and cast semester to the Semester enum
   if (!Object.values(Semester).includes(semester as Semester)) {
     throw new Error(`Invalid semester: ${semester}. Valid options are: ${Object.values(Semester).join(', ')}`);
@@ -160,14 +199,22 @@ async uploadMaterial(
     throw new Error(`Invalid material type: ${materialType}. Valid options are: ${Object.values(MaterialType).join(', ')}`);
   }
 
+  // Validate and cast academicLevel to the AcademicLevel enum
+  if (!Object.values(AcademicLevel).includes(academicLevel as AcademicLevel)) {
+    throw new Error(`Invalid academic level: ${academicLevel}. Valid options are: ${Object.values(AcademicLevel).join(', ')}`);
+  }
+
   const material = await this.materialService.create(
     { 
       name, 
       description, 
-      fileUrl, 
+      fileUrls,        // Changed from fileUrl to fileUrls array
       academicLevel: academicLevel as AcademicLevel, 
-      semester: semester as Semester, // Cast to Semester enum
-      materialType: materialType as MaterialType, // Cast to MaterialType enum
+      semester: semester as Semester,
+      materialType: materialType as MaterialType,
+      category,        // Added missing required field
+      session,         // Added missing required field
+      status: MaterialStatus.PENDING  // Added default status
     },
     userId,
   );

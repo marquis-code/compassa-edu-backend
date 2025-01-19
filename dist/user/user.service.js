@@ -16,6 +16,7 @@ exports.UserService = void 0;
 const common_1 = require("@nestjs/common");
 const mongoose_1 = require("@nestjs/mongoose");
 const create_materials_dto_1 = require("../materials/dto/create-materials.dto");
+const create_materials_dto_2 = require("../materials/dto/create-materials.dto");
 const mongoose_2 = require("mongoose");
 const user_schema_1 = require("./user.schema");
 const materials_service_1 = require("../materials/materials.service");
@@ -76,20 +77,27 @@ let UserService = class UserService {
         await user.deleteOne();
         return {};
     }
-    async uploadMaterial(userId, name, description, fileUrl, academicLevel, semester, materialType) {
+    async uploadMaterial(userId, name, description, fileUrl, academicLevel, semester, materialType, category, session) {
+        const fileUrls = [fileUrl];
         if (!Object.values(create_materials_dto_1.Semester).includes(semester)) {
             throw new Error(`Invalid semester: ${semester}. Valid options are: ${Object.values(create_materials_dto_1.Semester).join(', ')}`);
         }
         if (!Object.values(create_materials_dto_1.MaterialType).includes(materialType)) {
             throw new Error(`Invalid material type: ${materialType}. Valid options are: ${Object.values(create_materials_dto_1.MaterialType).join(', ')}`);
         }
+        if (!Object.values(create_materials_dto_1.AcademicLevel).includes(academicLevel)) {
+            throw new Error(`Invalid academic level: ${academicLevel}. Valid options are: ${Object.values(create_materials_dto_1.AcademicLevel).join(', ')}`);
+        }
         const material = await this.materialService.create({
             name,
             description,
-            fileUrl,
+            fileUrls,
             academicLevel: academicLevel,
             semester: semester,
             materialType: materialType,
+            category,
+            session,
+            status: create_materials_dto_2.MaterialStatus.PENDING
         }, userId);
         return material;
     }

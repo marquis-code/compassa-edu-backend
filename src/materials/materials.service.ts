@@ -1,15 +1,19 @@
 import { Injectable, NotFoundException, BadRequestException, ConflictException, forwardRef, Inject } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { Material, MaterialDocument } from './materials.schema';
-import { CreateMaterialDto, MaterialStatus } from './dto/create-materials.dto';
+// import { Material, MaterialDocument } from './materials.schema';
+// import { CreateMaterialDto, MaterialStatus } from './dto/create-materials.dto';
 import { UpdateMaterialDto } from './dto/update-materials.dto';
 import { UserService } from '../user/user.service';
+import { Material, MaterialDocument, Category, CategoryDocument, Session, SessionDocument } from './materials.schema';
+import { CreateMaterialDto, CreateCategoryDto, CreateSessionDto, MaterialStatus } from './dto/create-materials.dto';
 
 @Injectable()
 export class MaterialService {
   constructor(
     @InjectModel(Material.name) private materialModel: Model<MaterialDocument>,
+    @InjectModel(Category.name) private categoryModel: Model<CategoryDocument>,
+    @InjectModel(Session.name) private sessionModel: Model<SessionDocument>,
     @Inject(forwardRef(() => UserService))
     private readonly userService: UserService
   ) {
@@ -31,6 +35,75 @@ export class MaterialService {
 
     return savedMaterial;
   }
+
+  // async batchCreateMaterials(createMaterialsDto: CreateMaterialDto[], userId: string): Promise<Material[]> {
+  //   const materials = createMaterialsDto.map(dto => ({
+  //     ...dto,
+  //     user: userId,
+  //   }));
+
+  //   return this.materialModel.insertMany(materials);
+  // }
+
+  async batchCreateMaterials(createMaterialsDto: CreateMaterialDto[], userId: string): Promise<Material[]> {
+    const materials = createMaterialsDto.map(dto => ({
+      ...dto,
+      user: userId,
+    }));
+  
+    // Use type assertion to explicitly cast the result of insertMany to Material[]
+    return this.materialModel.insertMany(materials) as unknown as Material[];
+  }
+
+   // Category Logic
+   async createCategory(createCategoryDto: CreateCategoryDto): Promise<Category> {
+    const category = new this.categoryModel(createCategoryDto);
+    return category.save();
+  }
+
+  async getCategories(): Promise<Category[]> {
+    return this.categoryModel.find().exec();
+  }
+
+  async updateCategory(id: string, updateCategoryDto: CreateCategoryDto): Promise<Category> {
+    const category = await this.categoryModel.findByIdAndUpdate(id, updateCategoryDto, { new: true });
+    if (!category) {
+      throw new NotFoundException(`Category with ID ${id} not found`);
+    }
+    return category;
+  }
+
+  async deleteCategory(id: string): Promise<void> {
+    const result = await this.categoryModel.findByIdAndDelete(id);
+    if (!result) {
+      throw new NotFoundException(`Category with ID ${id} not found`);
+    }
+  }
+
+    // Session Logic
+    async createSession(createSessionDto: CreateSessionDto): Promise<Session> {
+      const session = new this.sessionModel(createSessionDto);
+      return session.save();
+    }
+  
+    async getSessions(): Promise<Session[]> {
+      return this.sessionModel.find().exec();
+    }
+  
+    async updateSession(id: string, updateSessionDto: CreateSessionDto): Promise<Session> {
+      const session = await this.sessionModel.findByIdAndUpdate(id, updateSessionDto, { new: true });
+      if (!session) {
+        throw new NotFoundException(`Session with ID ${id} not found`);
+      }
+      return session;
+    }
+  
+    async deleteSession(id: string): Promise<void> {
+      const result = await this.sessionModel.findByIdAndDelete(id);
+      if (!result) {
+        throw new NotFoundException(`Session with ID ${id} not found`);
+      }
+    }
 
   async findAll(query: any): Promise<Material[]> {
     const filters: any = { status: 'approved' };
@@ -138,28 +211,6 @@ export class MaterialService {
 
     return this.materialModel.find(filters).exec();
   }
-
-  // async getAllMaterials(query: any): Promise<Material[]> {
-  //   const filters: any = {};
-
-  //   if (query.academicLevel) {
-  //     filters.academicLevel = query.academicLevel;
-  //   }
-
-  //   if (query.semester) {
-  //     filters.semester = query.semester;
-  //   }
-
-  //   if (query.materialType) {
-  //     filters.materialType = query.materialType;
-  //   }
-
-  //   if (query.status) {
-  //     filters.status = query.status
-  //   }
-
-  //   return this.materialModel.find(filters).exec();
-  // }
 
   async getAllMaterials(query: any): Promise<Material[]> {
     const filters: any = {};

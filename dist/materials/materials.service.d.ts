@@ -23,15 +23,26 @@
 /// <reference types="mongoose/types/virtuals" />
 /// <reference types="mongoose/types/inferschematype" />
 import { Model } from 'mongoose';
-import { Material, MaterialDocument } from './materials.schema';
-import { CreateMaterialDto, MaterialStatus } from './dto/create-materials.dto';
 import { UpdateMaterialDto } from './dto/update-materials.dto';
 import { UserService } from '../user/user.service';
+import { Material, MaterialDocument, Category, CategoryDocument, Session, SessionDocument } from './materials.schema';
+import { CreateMaterialDto, CreateCategoryDto, CreateSessionDto, MaterialStatus } from './dto/create-materials.dto';
 export declare class MaterialService {
     private materialModel;
+    private categoryModel;
+    private sessionModel;
     private readonly userService;
-    constructor(materialModel: Model<MaterialDocument>, userService: UserService);
+    constructor(materialModel: Model<MaterialDocument>, categoryModel: Model<CategoryDocument>, sessionModel: Model<SessionDocument>, userService: UserService);
     create(createMaterialDto: CreateMaterialDto, userId: string): Promise<Material>;
+    batchCreateMaterials(createMaterialsDto: CreateMaterialDto[], userId: string): Promise<Material[]>;
+    createCategory(createCategoryDto: CreateCategoryDto): Promise<Category>;
+    getCategories(): Promise<Category[]>;
+    updateCategory(id: string, updateCategoryDto: CreateCategoryDto): Promise<Category>;
+    deleteCategory(id: string): Promise<void>;
+    createSession(createSessionDto: CreateSessionDto): Promise<Session>;
+    getSessions(): Promise<Session[]>;
+    updateSession(id: string, updateSessionDto: CreateSessionDto): Promise<Session>;
+    deleteSession(id: string): Promise<void>;
     findAll(query: any): Promise<Material[]>;
     findOne(id: string, userId: string): Promise<Material>;
     update(id: string, updateMaterialDto: UpdateMaterialDto, userId: string): Promise<Material>;

@@ -32,13 +32,23 @@ export declare enum AcademicLevel {
     FIVE_HUNDRED = "500",
     SIX_HUNDRED = "600"
 }
+export declare class CreateCategoryDto {
+    name: string;
+    description?: string;
+}
+export declare class CreateSessionDto {
+    name: string;
+    description?: string;
+}
 export declare class CreateMaterialDto {
     name: string;
     description: string;
     comment?: string;
+    fileUrls: string[];
     status?: string;
-    fileUrl: string;
     academicLevel: AcademicLevel;
     semester: Semester;
     materialType: MaterialType;
+    category: string;
+    session: string;
 }

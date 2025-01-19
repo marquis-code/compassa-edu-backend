@@ -24,6 +24,8 @@ exports.MaterialsModule = MaterialsModule = __decorate([
             mongoose_1.MongooseModule.forFeature([
                 { name: materials_schema_1.Material.name, schema: materials_schema_1.MaterialSchema },
                 { name: user_schema_1.User.name, schema: user_schema_1.UserSchema },
+                { name: materials_schema_1.Category.name, schema: materials_schema_1.CategorySchema },
+                { name: materials_schema_1.Session.name, schema: materials_schema_1.SessionSchema }
             ]),
             (0, common_1.forwardRef)(() => user_module_1.UserModule),
             (0, common_1.forwardRef)(() => auth_module_1.AuthModule),

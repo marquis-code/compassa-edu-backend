@@ -38,6 +38,27 @@ export enum AcademicLevel {
   SIX_HUNDRED = '600',
 }
 
+export class CreateCategoryDto {
+  @IsString()
+  @IsNotEmpty()
+  name: string;
+
+  @IsString()
+  @IsOptional()
+  description?: string;
+}
+
+export class CreateSessionDto {
+  @IsString()
+  @IsNotEmpty()
+  name: string;
+
+  @IsString()
+  @IsOptional()
+  description?: string;
+}
+
+
 export class CreateMaterialDto {
   @IsString()
   @IsNotEmpty()
@@ -51,13 +72,13 @@ export class CreateMaterialDto {
   @IsOptional()
   comment?: string;
 
+  @IsString({ each: true })
+  @IsNotEmpty()
+  fileUrls: string[];
+
   @IsString()
   @IsOptional()
   status?: string;
-
-  @IsString()
-  @IsNotEmpty()
-  fileUrl: string;
 
   @IsEnum(AcademicLevel)
   @IsNotEmpty()
@@ -70,4 +91,12 @@ export class CreateMaterialDto {
   @IsEnum(MaterialType)
   @IsNotEmpty()
   materialType: MaterialType;
+
+  @IsString()
+  @IsNotEmpty()
+  category: string; // Category ID
+
+  @IsString()
+  @IsNotEmpty()
+  session: string; // Session ID
 }

@@ -9,7 +9,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.CreateMaterialDto = exports.AcademicLevel = exports.MaterialType = exports.Semester = exports.MaterialStatus = void 0;
+exports.CreateMaterialDto = exports.CreateSessionDto = exports.CreateCategoryDto = exports.AcademicLevel = exports.MaterialType = exports.Semester = exports.MaterialStatus = void 0;
 const class_validator_1 = require("class-validator");
 var MaterialStatus;
 (function (MaterialStatus) {
@@ -49,6 +49,32 @@ var AcademicLevel;
     AcademicLevel["FIVE_HUNDRED"] = "500";
     AcademicLevel["SIX_HUNDRED"] = "600";
 })(AcademicLevel || (exports.AcademicLevel = AcademicLevel = {}));
+class CreateCategoryDto {
+}
+exports.CreateCategoryDto = CreateCategoryDto;
+__decorate([
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsNotEmpty)(),
+    __metadata("design:type", String)
+], CreateCategoryDto.prototype, "name", void 0);
+__decorate([
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", String)
+], CreateCategoryDto.prototype, "description", void 0);
+class CreateSessionDto {
+}
+exports.CreateSessionDto = CreateSessionDto;
+__decorate([
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsNotEmpty)(),
+    __metadata("design:type", String)
+], CreateSessionDto.prototype, "name", void 0);
+__decorate([
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", String)
+], CreateSessionDto.prototype, "description", void 0);
 class CreateMaterialDto {
 }
 exports.CreateMaterialDto = CreateMaterialDto;
@@ -68,15 +94,15 @@ __decorate([
     __metadata("design:type", String)
 ], CreateMaterialDto.prototype, "comment", void 0);
 __decorate([
+    (0, class_validator_1.IsString)({ each: true }),
+    (0, class_validator_1.IsNotEmpty)(),
+    __metadata("design:type", Array)
+], CreateMaterialDto.prototype, "fileUrls", void 0);
+__decorate([
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.IsOptional)(),
     __metadata("design:type", String)
 ], CreateMaterialDto.prototype, "status", void 0);
-__decorate([
-    (0, class_validator_1.IsString)(),
-    (0, class_validator_1.IsNotEmpty)(),
-    __metadata("design:type", String)
-], CreateMaterialDto.prototype, "fileUrl", void 0);
 __decorate([
     (0, class_validator_1.IsEnum)(AcademicLevel),
     (0, class_validator_1.IsNotEmpty)(),
@@ -92,4 +118,14 @@ __decorate([
     (0, class_validator_1.IsNotEmpty)(),
     __metadata("design:type", String)
 ], CreateMaterialDto.prototype, "materialType", void 0);
+__decorate([
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsNotEmpty)(),
+    __metadata("design:type", String)
+], CreateMaterialDto.prototype, "category", void 0);
+__decorate([
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsNotEmpty)(),
+    __metadata("design:type", String)
+], CreateMaterialDto.prototype, "session", void 0);
 //# sourceMappingURL=create-materials.dto.js.map

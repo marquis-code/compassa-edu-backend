@@ -77,8 +77,18 @@ let UserController = class UserController {
         if (!userId) {
             throw new Error("User is not authenticated");
         }
-        const { name, description, fileUrl, academicLevel, semester, materialType, status = create_materials_dto_1.MaterialStatus.PENDING, } = createMaterialDto;
-        const material = await this.materialService.create({ name, description, fileUrl, academicLevel, semester, materialType, status }, userId);
+        const { name, description, fileUrls, academicLevel, semester, materialType, status = create_materials_dto_1.MaterialStatus.PENDING, category, session, } = createMaterialDto;
+        const material = await this.materialService.create({
+            name,
+            description,
+            fileUrls,
+            academicLevel,
+            semester,
+            materialType,
+            status,
+            category,
+            session,
+        }, userId);
         return material;
     }
     updateUser(id, dto, user) {

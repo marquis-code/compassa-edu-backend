@@ -150,7 +150,34 @@ export class UserController {
   //   return material;
   // }
 
-  @Auth()
+//   @Auth()
+// @Post("upload-material")
+// async uploadMaterial(
+//   @Body() createMaterialDto: CreateMaterialDto,
+//   @Req() req: Request
+// ) {
+//   const userId = req.user?.id; // Assuming user data is attached to the request
+//   if (!userId) {
+//     throw new Error("User is not authenticated");
+//   }
+//   const {
+//     name,
+//     description,
+//     fileUrls,
+//     academicLevel,
+//     semester,
+//     materialType,
+//     status = MaterialStatus.PENDING, // Default to PENDING if not provided
+//   } = createMaterialDto;
+
+//   const material = await this.materialService.create(
+//     { name, description, fileUrls, academicLevel, semester, materialType, status },
+//     userId
+//   );
+//   return material;
+// }
+
+@Auth()
 @Post("upload-material")
 async uploadMaterial(
   @Body() createMaterialDto: CreateMaterialDto,
@@ -163,15 +190,27 @@ async uploadMaterial(
   const {
     name,
     description,
-    fileUrl,
+    fileUrls,
     academicLevel,
     semester,
     materialType,
     status = MaterialStatus.PENDING, // Default to PENDING if not provided
+    category,  // Added missing field
+    session,   // Added missing field
   } = createMaterialDto;
 
   const material = await this.materialService.create(
-    { name, description, fileUrl, academicLevel, semester, materialType, status },
+    { 
+      name, 
+      description, 
+      fileUrls, 
+      academicLevel, 
+      semester, 
+      materialType, 
+      status,
+      category,  // Added missing field
+      session,   // Added missing field
+    },
     userId
   );
   return material;

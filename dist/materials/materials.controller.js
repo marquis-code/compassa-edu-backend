@@ -18,18 +18,62 @@ const auth_guard_1 = require("../auth/auth.guard");
 const materials_service_1 = require("../materials/materials.service");
 const create_materials_dto_1 = require("./dto/create-materials.dto");
 const update_materials_dto_1 = require("./dto/update-materials.dto");
+const create_session_dto_1 = require("./dto/create-session-dto");
+const create_category_dto_1 = require("./dto/create-category-dto");
 let MaterialsController = class MaterialsController {
     constructor(materialService) {
         this.materialService = materialService;
     }
-    async create(createMaterialDto, req) {
-        try {
-            const material = await this.materialService.create(createMaterialDto, req.user.id);
-            return { success: true, data: material };
+    async uploadMaterial(createMaterialDto, req) {
+        var _a;
+        const userId = (_a = req.user) === null || _a === void 0 ? void 0 : _a.id;
+        if (!userId) {
+            throw new Error('User is not authenticated');
         }
-        catch (error) {
-            throw new common_1.HttpException('Error creating meterial', common_1.HttpStatus.INTERNAL_SERVER_ERROR);
+        const material = await this.materialService.create(createMaterialDto, userId);
+        return { success: true, data: material };
+    }
+    async createCategory(createCategoryDto) {
+        const category = await this.materialService.createCategory(createCategoryDto);
+        return { success: true, data: category };
+    }
+    async getCategories() {
+        const categories = await this.materialService.getCategories();
+        return { success: true, data: categories };
+    }
+    async updateCategory(id, updateCategoryDto) {
+        const category = await this.materialService.updateCategory(id, updateCategoryDto);
+        return { success: true, data: category };
+    }
+    async deleteCategory(id) {
+        await this.materialService.deleteCategory(id);
+        return { success: true, message: 'Category deleted successfully' };
+    }
+    async createSession(createSessionDto) {
+        const session = await this.materialService.createSession(createSessionDto);
+        return { success: true, data: session };
+    }
+    async getSessions() {
+        const sessions = await this.materialService.getSessions();
+        return { success: true, data: sessions };
+    }
+    async updateSession(id, updateSessionDto) {
+        const session = await this.materialService.updateSession(id, updateSessionDto);
+        return { success: true, data: session };
+    }
+    async deleteSession(id) {
+        await this.materialService.deleteSession(id);
+        return { success: true, message: 'Session deleted successfully' };
+    }
+    async batchUploadMaterials(body, req) {
+        var _a;
+        const userId = (_a = req.user) === null || _a === void 0 ? void 0 : _a.id;
+        if (!userId) {
+            throw new Error('User is not authenticated');
         }
+        const materialsDtoArray = Array.isArray(body.materials) ? body.materials : [];
+        const materials = await this.materialService.batchCreateMaterials(materialsDtoArray, userId);
+        return { success: true, data: materials };
     }
     async findAll(req) {
         try {
@@ -86,13 +130,77 @@ let MaterialsController = class MaterialsController {
 };
 exports.MaterialsController = MaterialsController;
 __decorate([
-    (0, common_1.Post)(),
+    (0, common_1.Post)('upload-material'),
     __param(0, (0, common_1.Body)()),
     __param(1, (0, common_1.Req)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [create_materials_dto_1.CreateMaterialDto, Object]),
     __metadata("design:returntype", Promise)
-], MaterialsController.prototype, "create", null);
+], MaterialsController.prototype, "uploadMaterial", null);
+__decorate([
+    (0, common_1.Post)('category'),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [create_category_dto_1.CreateCategoryDto]),
+    __metadata("design:returntype", Promise)
+], MaterialsController.prototype, "createCategory", null);
+__decorate([
+    (0, common_1.Get)('categories'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], MaterialsController.prototype, "getCategories", null);
+__decorate([
+    (0, common_1.Put)('category/:id'),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, create_category_dto_1.CreateCategoryDto]),
+    __metadata("design:returntype", Promise)
+], MaterialsController.prototype, "updateCategory", null);
+__decorate([
+    (0, common_1.Delete)('category/:id'),
+    __param(0, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], MaterialsController.prototype, "deleteCategory", null);
+__decorate([
+    (0, common_1.Post)('session'),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [create_session_dto_1.CreateSessionDto]),
+    __metadata("design:returntype", Promise)
+], MaterialsController.prototype, "createSession", null);
+__decorate([
+    (0, common_1.Get)('sessions'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], MaterialsController.prototype, "getSessions", null);
+__decorate([
+    (0, common_1.Put)('session/:id'),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, create_session_dto_1.CreateSessionDto]),
+    __metadata("design:returntype", Promise)
+], MaterialsController.prototype, "updateSession", null);
+__decorate([
+    (0, common_1.Delete)('session/:id'),
+    __param(0, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], MaterialsController.prototype, "deleteSession", null);
+__decorate([
+    (0, common_1.Post)('batch-upload-materials'),
+    __param(0, (0, common_1.Body)()),
+    __param(1, (0, common_1.Req)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:returntype", Promise)
+], MaterialsController.prototype, "batchUploadMaterials", null);
 __decorate([
     (0, common_1.Get)(),
     __param(0, (0, common_1.Req)()),
