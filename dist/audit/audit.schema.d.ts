@@ -22,6 +22,7 @@
 /// <reference types="mongoose/types/validation" />
 /// <reference types="mongoose/types/virtuals" />
 /// <reference types="mongoose/types/inferschematype" />
+/// <reference types="mongoose/types/inferrawdoctype" />
 import { Document, Types } from 'mongoose';
 export declare class AuditTrail extends Document {
     action: string;
@@ -32,8 +33,12 @@ export declare class AuditTrail extends Document {
     ipAddress?: string;
     timestamp?: Date;
 }
-export declare const AuditTrailSchema: import("mongoose").Schema<AuditTrail, import("mongoose").Model<AuditTrail, any, any, any, Document<unknown, any, AuditTrail> & AuditTrail & {
-    _id: Types.ObjectId;
-}, any>, {}, {}, {}, {}, import("mongoose").DefaultSchemaOptions, AuditTrail, Document<unknown, {}, import("mongoose").FlatRecord<AuditTrail>> & import("mongoose").FlatRecord<AuditTrail> & {
-    _id: Types.ObjectId;
+export declare const AuditTrailSchema: import("mongoose").Schema<AuditTrail, import("mongoose").Model<AuditTrail, any, any, any, Document<unknown, any, AuditTrail> & AuditTrail & Required<{
+    _id: unknown;
+}> & {
+    __v: number;
+}, any>, {}, {}, {}, {}, import("mongoose").DefaultSchemaOptions, AuditTrail, Document<unknown, {}, import("mongoose").FlatRecord<AuditTrail>> & import("mongoose").FlatRecord<AuditTrail> & Required<{
+    _id: unknown;
+}> & {
+    __v: number;
 }>;

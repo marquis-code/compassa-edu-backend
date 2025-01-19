@@ -28,7 +28,7 @@ export class MaterialService {
       user: userId, // Associate the activity with the logged-in user
     });
  
-    const savedMaterial = await createdMaterial.save();
+    const savedMaterial = await createdMaterial.save() as any
 
     // Use user service to update the user's materials array
     await this.userService.addUploadedMaterial(userId, savedMaterial._id);

@@ -22,6 +22,10 @@ const cloudinary_config_1 = require("./cloudinary.config");
 const cloudinary_module_1 = require("./cloudinary/cloudinary.module");
 const upload_module_1 = require("./upload/upload.module");
 const materials_module_1 = require("./materials/materials.module");
+const group_module_1 = require("./group/group.module");
+const messages_module_1 = require("./message/messages.module");
+const websocket_gateway_1 = require("./gateways/websocket.gateway");
+const shared_module_1 = require("./shared.module");
 const multer = require("multer");
 const path_1 = require("path");
 let AppModule = class AppModule {
@@ -64,16 +68,21 @@ exports.AppModule = AppModule = __decorate([
             auth_module_1.AuthModule,
             user_module_1.UserModule,
             image_module_1.ImageModule,
+            group_module_1.GroupsModule,
+            messages_module_1.MessagesModule,
+            shared_module_1.SharedModule,
         ],
         providers: [
             { provide: core_1.APP_GUARD, useClass: throttler_1.ThrottlerGuard },
             cloudinary_service_1.CloudinaryService,
+            websocket_gateway_1.WebSocketGateway,
             {
                 provide: "Cloudinary",
                 useFactory: cloudinary_config_1.configureCloudinary,
                 inject: [config_1.ConfigService],
             }
         ],
+        exports: [websocket_gateway_1.WebSocketGateway],
     })
 ], AppModule);
 //# sourceMappingURL=app.module.js.map

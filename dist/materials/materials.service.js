@@ -168,6 +168,12 @@ let MaterialService = class MaterialService {
         if (query.status) {
             filters.status = query.status;
         }
+        if (query.caategory) {
+            filters.category = query.category;
+        }
+        if (query.session) {
+            filters.session = query.session;
+        }
         return this.materialModel.find(filters).populate('user', '-password -__v').exec();
     }
     async countMaterialsByUser(userId) {
@@ -244,6 +250,20 @@ let MaterialService = class MaterialService {
             failed,
             details: results,
         };
+    }
+    async findByCategoryId(categoryId) {
+        return this.materialModel
+            .find({ category: categoryId })
+            .populate('session')
+            .populate('category')
+            .exec();
+    }
+    async findBySessionId(sessionId) {
+        return this.materialModel
+            .find({ session: sessionId })
+            .populate('session')
+            .populate('category')
+            .exec();
     }
 };
 exports.MaterialService = MaterialService;

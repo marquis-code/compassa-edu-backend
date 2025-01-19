@@ -22,6 +22,7 @@
 /// <reference types="mongoose/types/validation" />
 /// <reference types="mongoose/types/virtuals" />
 /// <reference types="mongoose/types/inferschematype" />
+/// <reference types="mongoose/types/inferrawdoctype" />
 import { Model } from 'mongoose';
 import { UpdateMaterialDto } from './dto/update-materials.dto';
 import { UserService } from '../user/user.service';
@@ -69,4 +70,14 @@ export declare class MaterialService {
         failed: number;
         details: any[];
     }>;
+    findByCategoryId(categoryId: string): Promise<(import("mongoose").Document<unknown, {}, MaterialDocument> & Material & import("mongoose").Document<unknown, any, any> & Required<{
+        _id: unknown;
+    }> & {
+        __v: number;
+    })[]>;
+    findBySessionId(sessionId: string): Promise<(import("mongoose").Document<unknown, {}, MaterialDocument> & Material & import("mongoose").Document<unknown, any, any> & Required<{
+        _id: unknown;
+    }> & {
+        __v: number;
+    })[]>;
 }

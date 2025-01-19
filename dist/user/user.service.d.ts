@@ -22,6 +22,7 @@
 /// <reference types="mongoose/types/validation" />
 /// <reference types="mongoose/types/virtuals" />
 /// <reference types="mongoose/types/inferschematype" />
+/// <reference types="mongoose/types/inferrawdoctype" />
 import { Model } from "mongoose";
 import { User, UserDocument } from "./user.schema";
 import { CreateUserDto, UpdateUserDto } from "./user.dto";
@@ -34,6 +35,8 @@ export declare class UserService {
     getUsers(): Promise<{
         users: (import("mongoose").Document<unknown, {}, UserDocument> & import("mongoose").Document<unknown, {}, User> & User & {
             _id: import("mongoose").Types.ObjectId;
+        } & {
+            __v: number;
         } & {
             matchPassword: (password: string) => Promise<boolean>;
             getSignedJwtToken: () => string;
@@ -48,6 +51,8 @@ export declare class UserService {
     getUser(id: string): Promise<import("mongoose").Document<unknown, {}, UserDocument> & import("mongoose").Document<unknown, {}, User> & User & {
         _id: import("mongoose").Types.ObjectId;
     } & {
+        __v: number;
+    } & {
         matchPassword: (password: string) => Promise<boolean>;
         getSignedJwtToken: () => string;
         getResetPasswordToken: () => string;
@@ -57,6 +62,8 @@ export declare class UserService {
     updateUser(id: string, dto: UpdateUserDto, currentUser: UserDocument): Promise<{
         user: import("mongoose").Document<unknown, {}, UserDocument> & import("mongoose").Document<unknown, {}, User> & User & {
             _id: import("mongoose").Types.ObjectId;
+        } & {
+            __v: number;
         } & {
             matchPassword: (password: string) => Promise<boolean>;
             getSignedJwtToken: () => string;

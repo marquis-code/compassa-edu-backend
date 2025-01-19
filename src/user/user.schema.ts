@@ -45,6 +45,10 @@ export class User {
   @Prop([{ type: Types.ObjectId, ref: "Materials" }])
   uploadedMaterials?: Types.ObjectId[];
 
+
+  @Prop({ type: [{ type: Types.ObjectId, ref: 'Group' }] })
+  groups: Types.ObjectId[];
+
   
   @Prop({
     type: String,

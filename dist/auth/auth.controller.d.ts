@@ -23,6 +23,7 @@
 /// <reference types="mongoose/types/virtuals" />
 /// <reference types="mongoose" />
 /// <reference types="mongoose/types/inferschematype" />
+/// <reference types="mongoose/types/inferrawdoctype" />
 import { Request } from "express";
 import { UserDocument } from "../user/user.schema";
 import { SignupDto, LoginDto, UpdatePasswordDto, ResetPasswordDto } from "./auth.dto";
@@ -38,6 +39,8 @@ export declare class AuthController {
         user: import("mongoose").Document<unknown, {}, UserDocument> & import("mongoose").Document<unknown, {}, import("../user/user.schema").User> & import("../user/user.schema").User & {
             _id: import("mongoose").Types.ObjectId;
         } & {
+            __v: number;
+        } & {
             matchPassword: (password: string) => Promise<boolean>;
             getSignedJwtToken: () => string;
             getResetPasswordToken: () => string;
@@ -52,6 +55,8 @@ export declare class AuthController {
         user: import("mongoose").Document<unknown, {}, UserDocument> & import("mongoose").Document<unknown, {}, import("../user/user.schema").User> & import("../user/user.schema").User & {
             _id: import("mongoose").Types.ObjectId;
         } & {
+            __v: number;
+        } & {
             matchPassword: (password: string) => Promise<boolean>;
             getSignedJwtToken: () => string;
             getResetPasswordToken: () => string;
@@ -65,6 +70,8 @@ export declare class AuthController {
     resetPassword(dto: ResetPasswordDto, token: string): Promise<{
         user: import("mongoose").Document<unknown, {}, UserDocument> & import("mongoose").Document<unknown, {}, import("../user/user.schema").User> & import("../user/user.schema").User & {
             _id: import("mongoose").Types.ObjectId;
+        } & {
+            __v: number;
         } & {
             matchPassword: (password: string) => Promise<boolean>;
             getSignedJwtToken: () => string;

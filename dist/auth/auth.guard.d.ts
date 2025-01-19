@@ -22,6 +22,7 @@
 /// <reference types="mongoose/types/validation" />
 /// <reference types="mongoose/types/virtuals" />
 /// <reference types="mongoose/types/inferschematype" />
+/// <reference types="mongoose/types/inferrawdoctype" />
 import { CanActivate, ExecutionContext } from "@nestjs/common";
 import { Request } from "express";
 import { Model } from "mongoose";

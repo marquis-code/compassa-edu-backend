@@ -60,6 +60,10 @@ __decorate([
     __metadata("design:type", Array)
 ], User.prototype, "uploadedMaterials", void 0);
 __decorate([
+    (0, mongoose_1.Prop)({ type: [{ type: mongoose_2.Types.ObjectId, ref: 'Group' }] }),
+    __metadata("design:type", Array)
+], User.prototype, "groups", void 0);
+__decorate([
     (0, mongoose_1.Prop)({
         type: String,
         enum: UserRole,

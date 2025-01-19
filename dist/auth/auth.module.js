@@ -11,9 +11,11 @@ const common_1 = require("@nestjs/common");
 const mongoose_1 = require("@nestjs/mongoose");
 const user_module_1 = require("../user/user.module");
 const auth_controller_1 = require("./auth.controller");
+const jwt_1 = require("@nestjs/jwt");
 const auth_sevice_1 = require("./auth.sevice");
 const auth_guard_1 = require("./auth.guard");
 const user_schema_1 = require("../user/user.schema");
+const ws_jwt_guard_1 = require("./ws-jwt.guard");
 let AuthModule = class AuthModule {
 };
 exports.AuthModule = AuthModule;
@@ -21,11 +23,15 @@ exports.AuthModule = AuthModule = __decorate([
     (0, common_1.Module)({
         imports: [
             mongoose_1.MongooseModule.forFeature([{ name: user_schema_1.User.name, schema: user_schema_1.UserSchema }]),
+            jwt_1.JwtModule.register({
+                secret: process.env.JWT_SECRET,
+                signOptions: { expiresIn: '1h' },
+            }),
             (0, common_1.forwardRef)(() => user_module_1.UserModule),
         ],
         controllers: [auth_controller_1.AuthController],
-        providers: [auth_sevice_1.AuthService, auth_guard_1.AuthGuard],
-        exports: [auth_sevice_1.AuthService, auth_guard_1.AuthGuard],
+        providers: [auth_sevice_1.AuthService, auth_guard_1.AuthGuard, ws_jwt_guard_1.WsJwtGuard],
+        exports: [auth_sevice_1.AuthService, auth_guard_1.AuthGuard, ws_jwt_guard_1.WsJwtGuard, jwt_1.JwtModule],
     })
 ], AuthModule);
 //# sourceMappingURL=auth.module.js.map

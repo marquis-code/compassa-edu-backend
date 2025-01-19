@@ -124,6 +124,24 @@ let MaterialsController = class MaterialsController {
             throw new common_1.HttpException(error.message || 'Error deleting material', common_1.HttpStatus.NOT_FOUND);
         }
     }
+    async getMaterialsByCategory(categoryId) {
+        try {
+            const materials = await this.materialService.findByCategoryId(categoryId);
+            return { success: true, data: materials };
+        }
+        catch (error) {
+            throw new common_1.HttpException(error.message || 'Error fetching materials by category', common_1.HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+    async getMaterialsBySession(sessionId) {
+        try {
+            const materials = await this.materialService.findBySessionId(sessionId);
+            return { success: true, data: materials };
+        }
+        catch (error) {
+            throw new common_1.HttpException(error.message || 'Error fetching materials by session', common_1.HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
     async batchUpdateMaterialStatus(updates) {
         return await this.materialService.batchUpdateStatus(updates);
     }
@@ -241,6 +259,20 @@ __decorate([
     __metadata("design:paramtypes", [String, Object]),
     __metadata("design:returntype", Promise)
 ], MaterialsController.prototype, "delete", null);
+__decorate([
+    (0, common_1.Get)('by-category/:categoryId'),
+    __param(0, (0, common_1.Param)('categoryId')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], MaterialsController.prototype, "getMaterialsByCategory", null);
+__decorate([
+    (0, common_1.Get)('by-session/:sessionId'),
+    __param(0, (0, common_1.Param)('sessionId')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], MaterialsController.prototype, "getMaterialsBySession", null);
 __decorate([
     (0, common_1.Patch)('batch-update-status'),
     __param(0, (0, common_1.Body)()),

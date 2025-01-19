@@ -23,6 +23,7 @@
 /// <reference types="mongoose/types/virtuals" />
 /// <reference types="mongoose" />
 /// <reference types="mongoose/types/inferschematype" />
+/// <reference types="mongoose/types/inferrawdoctype" />
 import { UserDocument } from "./user.schema";
 import { Request } from "express";
 import { UserService } from "./user.service";
@@ -44,6 +45,8 @@ export declare class UserController {
         users: (import("mongoose").Document<unknown, {}, UserDocument> & import("mongoose").Document<unknown, {}, import("./user.schema").User> & import("./user.schema").User & {
             _id: import("mongoose").Types.ObjectId;
         } & {
+            __v: number;
+        } & {
             matchPassword: (password: string) => Promise<boolean>;
             getSignedJwtToken: () => string;
             getResetPasswordToken: () => string;
@@ -57,6 +60,8 @@ export declare class UserController {
     getUser(id: string): Promise<import("mongoose").Document<unknown, {}, UserDocument> & import("mongoose").Document<unknown, {}, import("./user.schema").User> & import("./user.schema").User & {
         _id: import("mongoose").Types.ObjectId;
     } & {
+        __v: number;
+    } & {
         matchPassword: (password: string) => Promise<boolean>;
         getSignedJwtToken: () => string;
         getResetPasswordToken: () => string;
@@ -67,6 +72,8 @@ export declare class UserController {
     updateUser(id: string, dto: UpdateUserDto, user: UserDocument): Promise<{
         user: import("mongoose").Document<unknown, {}, UserDocument> & import("mongoose").Document<unknown, {}, import("./user.schema").User> & import("./user.schema").User & {
             _id: import("mongoose").Types.ObjectId;
+        } & {
+            __v: number;
         } & {
             matchPassword: (password: string) => Promise<boolean>;
             getSignedJwtToken: () => string;

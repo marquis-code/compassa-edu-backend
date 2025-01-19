@@ -15,6 +15,10 @@ import { configureCloudinary } from "./cloudinary.config";
 import { CloudinaryModule } from "./cloudinary/cloudinary.module";
 import { UploadModule } from './upload/upload.module';
 import { MaterialsModule } from './materials/materials.module';
+import { GroupsModule } from './group/group.module';
+import { MessagesModule } from './message/messages.module';
+import { WebSocketGateway } from './gateways/websocket.gateway';
+import { SharedModule } from './shared.module';
 import * as multer from "multer";
 
 import { join } from "path";
@@ -57,17 +61,23 @@ import { join } from "path";
     AuthModule,
     UserModule,
     ImageModule,
+    GroupsModule,
+    MessagesModule,
+    SharedModule, // Import SharedModule
+
     // forwardRef(() => MaterialsModule), // If circular dependencies exist
     // forwardRef(() => UserModule),     // If circular dependencies exist
   ],
   providers: [
     { provide: APP_GUARD, useClass: ThrottlerGuard },
     CloudinaryService,
+    WebSocketGateway,
     {
       provide: "Cloudinary",
       useFactory: configureCloudinary,
       inject: [ConfigService],
     }
   ],
+  exports: [WebSocketGateway],
 })
 export class AppModule {}
