@@ -1,4 +1,3 @@
-/// <reference types="multer" />
 import { HttpStatus } from '@nestjs/common';
 import { CloudinaryService } from '../cloudinary/cloudinary.service';
 export declare class UploadController {
