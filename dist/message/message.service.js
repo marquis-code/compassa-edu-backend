@@ -24,10 +24,18 @@ let MessagesService = class MessagesService {
         this.wsGateway = wsGateway;
     }
     async create(createMessageDto, userId) {
-        const message = new this.messageModel(Object.assign(Object.assign({}, createMessageDto), { sender: new mongoose_2.Types.ObjectId(userId), group: new mongoose_2.Types.ObjectId(createMessageDto.group) }));
-        console.log('Creating message:', message);
+        const { content, group, attachments = [], type = 'text' } = createMessageDto;
+        const groupId = new mongoose_2.Types.ObjectId(group);
+        const senderId = new mongoose_2.Types.ObjectId(userId);
+        const message = new this.messageModel({
+            content,
+            group: groupId,
+            sender: senderId,
+            attachments,
+            type,
+        });
         const savedMessage = await message.save();
-        this.wsGateway.notifyGroupMembers(message.group, 'newMessage', savedMessage);
+        this.wsGateway.notifyGroupMembers(groupId, 'newMessage', savedMessage);
         return savedMessage;
     }
     async findGroupMessages(groupId) {

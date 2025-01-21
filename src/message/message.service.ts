@@ -39,22 +39,45 @@ export class MessagesService {
   //   return savedMessage;
   // }
 
+  // async create(createMessageDto: CreateMessageDto, userId: string): Promise<Message> {
+  //   const message = new this.messageModel({
+  //     ...createMessageDto,
+  //     sender: new Types.ObjectId(userId), // Convert sender to ObjectId
+  //     group: new Types.ObjectId(createMessageDto.group), // Convert group to ObjectId
+  //   });
+  
+  //   console.log('Creating message:', message); // Debug log
+
+  //   const savedMessage = await message.save();
+  
+  //   // Notify group members of the new message
+  //   this.wsGateway.notifyGroupMembers(message.group, 'newMessage', savedMessage);
+  
+  //   return savedMessage;
+  // }
+
   async create(createMessageDto: CreateMessageDto, userId: string): Promise<Message> {
+    const { content, group, attachments = [], type = 'text' } = createMessageDto;
+  
+    const groupId = new Types.ObjectId(group); // Convert group to ObjectId
+    const senderId = new Types.ObjectId(userId); // Convert userId to ObjectId
+  
     const message = new this.messageModel({
-      ...createMessageDto,
-      sender: new Types.ObjectId(userId), // Convert sender to ObjectId
-      group: new Types.ObjectId(createMessageDto.group), // Convert group to ObjectId
+      content,
+      group: groupId,
+      sender: senderId,
+      attachments,
+      type,
     });
   
-    console.log('Creating message:', message); // Debug log
-
     const savedMessage = await message.save();
   
     // Notify group members of the new message
-    this.wsGateway.notifyGroupMembers(message.group, 'newMessage', savedMessage);
+    this.wsGateway.notifyGroupMembers(groupId, 'newMessage', savedMessage);
   
     return savedMessage;
   }
+  
 
   // async findGroupMessages(groupId: string): Promise<Message[]> {
   //   return this.messageModel
