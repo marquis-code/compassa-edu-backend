@@ -33,7 +33,7 @@ export class AuthService {
 
   async login(dto: LoginDto) {
     const user = await this.User.findOne({ matric: dto.matric }).select("+password");
-
+                                                               
     if (!user) throw new NotFoundException("No user exists with the entered matric");
 
     const isMatch = await user.matchPassword(dto.password);

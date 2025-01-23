@@ -7,6 +7,8 @@ export declare class Group {
     members: Types.ObjectId[];
     messages: Types.ObjectId[];
     status: 'public' | 'private';
+    createdAt?: Date;
+    updatedAt?: Date;
 }
 export declare const GroupSchema: import("mongoose").Schema<Group, import("mongoose").Model<Group, any, any, any, Document<unknown, any, Group> & Group & {
     _id: Types.ObjectId;

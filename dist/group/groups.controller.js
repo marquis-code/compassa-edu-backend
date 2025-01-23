@@ -17,12 +17,17 @@ const common_1 = require("@nestjs/common");
 const group_service_1 = require("./group.service");
 const group_dto_1 = require("./dto/group.dto");
 const auth_guard_1 = require("../auth/auth.guard");
+const mongodb_1 = require("mongodb");
 let GroupsController = class GroupsController {
     constructor(groupsService) {
         this.groupsService = groupsService;
     }
     create(createGroupDto, req) {
         return this.groupsService.create(createGroupDto, req.user.id);
+    }
+    getUserGroups(req) {
+        const userId = req.user.id;
+        return this.groupsService.findUserGroups(userId);
     }
     findAll() {
         return this.groupsService.findAll();
@@ -40,10 +45,8 @@ let GroupsController = class GroupsController {
         return this.groupsService.joinByUserId(groupId, userId);
     }
     joinGroup(groupId, req) {
-        return this.groupsService.joinGroup(groupId, req.user.id);
-    }
-    getUserGroups(req) {
-        return this.groupsService.getUserGroupsWithMessages(req.user.id);
+        const groupObjectId = new mongodb_1.ObjectId(groupId);
+        return this.groupsService.joinGroup(groupObjectId, req.user.id);
     }
 };
 exports.GroupsController = GroupsController;
@@ -55,6 +58,13 @@ __decorate([
     __metadata("design:paramtypes", [group_dto_1.CreateGroupDto, Object]),
     __metadata("design:returntype", void 0)
 ], GroupsController.prototype, "create", null);
+__decorate([
+    (0, common_1.Get)('my-groups'),
+    __param(0, (0, common_1.Request)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", void 0)
+], GroupsController.prototype, "getUserGroups", null);
 __decorate([
     (0, common_1.Get)(),
     __metadata("design:type", Function),
@@ -101,13 +111,6 @@ __decorate([
     __metadata("design:paramtypes", [String, Object]),
     __metadata("design:returntype", void 0)
 ], GroupsController.prototype, "joinGroup", null);
-__decorate([
-    (0, common_1.Get)('user-groups'),
-    __param(0, (0, common_1.Request)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
-    __metadata("design:returntype", void 0)
-], GroupsController.prototype, "getUserGroups", null);
 exports.GroupsController = GroupsController = __decorate([
     (0, common_1.Controller)('groups'),
     (0, common_1.UseGuards)(auth_guard_1.AuthGuard),

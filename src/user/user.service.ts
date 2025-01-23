@@ -65,7 +65,7 @@ export class UserService {
     return { user: savedUser };
   }
 
-  // async getUser(id: string) {
+            // async getUser(id: string) {
   //   console.log(id, 'user id here')
   //   const user = await this.User.findById(id).exec();
   //   console.log(user)

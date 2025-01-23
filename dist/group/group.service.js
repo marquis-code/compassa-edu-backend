@@ -19,33 +19,34 @@ const mongoose_2 = require("mongoose");
 const group_schema_1 = require("./group.schema");
 const websocket_gateway_1 = require("../gateways/websocket.gateway");
 let GroupsService = class GroupsService {
-    constructor(groupModel, wsGateway) {
+    constructor(groupModel, userModel, wsGateway) {
         this.groupModel = groupModel;
+        this.userModel = userModel;
         this.wsGateway = wsGateway;
     }
     async create(createGroupDto, userId) {
         const group = new this.groupModel(Object.assign(Object.assign({}, createGroupDto), { creator: userId, members: [userId] }));
+        console.log('Creating group with members:', group.members);
         return group.save();
     }
     async findAll(status) {
         const query = status ? { status } : {};
-        const groups = await this.groupModel
-            .find(query)
-            .populate('members', 'username email')
-            .lean();
-        return groups.map(group => this.mapToPopulatedGroup(group));
+        const groups = await this.groupModel.find(query).lean();
+        return groups;
     }
     async findOne(id) {
+        console.log('Validating group ID:', id);
         if (!mongoose_2.Types.ObjectId.isValid(id)) {
-            throw new common_1.NotFoundException('Invalid group ID');
+            throw new common_1.NotFoundException(`Invalid group ID: ${id}`);
         }
         const group = await this.groupModel
             .findById(id)
             .populate('members', 'username email')
             .lean();
         if (!group) {
-            throw new common_1.NotFoundException('Group not found');
+            throw new common_1.NotFoundException(`Group not found with ID: ${id}`);
         }
+        console.log('Group members:', group.members);
         return this.mapToPopulatedGroup(group);
     }
     async update(id, updateGroupDto, userId) {
@@ -67,15 +68,28 @@ let GroupsService = class GroupsService {
         await this.groupModel.findByIdAndDelete(id);
     }
     async joinGroup(groupId, userId) {
-        const group = await this.findOne(groupId);
+        console.log(groupId, 'group id');
+        console.log(userId, 'user id');
+        const group = await this.groupModel.findById(groupId);
+        if (!group) {
+            throw new common_1.NotFoundException('Group not found');
+        }
         if (group.status === 'private') {
-            throw new common_1.ForbiddenException('Cannot join private group without invitation');
+            throw new common_1.ForbiddenException('Cannot join a private group without an invitation');
         }
-        const isMember = group.members.some(member => member._id.equals(userId));
+        const isMember = group.members.some((member) => { var _a, _b; return (_b = (_a = member._id) === null || _a === void 0 ? void 0 : _a.equals) === null || _b === void 0 ? void 0 : _b.call(_a, userId); });
         if (!isMember) {
-            await this.groupModel.findByIdAndUpdate(groupId, { $addToSet: { members: userId } });
+            await this.groupModel.findByIdAndUpdate(groupId, {
+                $addToSet: { members: userId },
+            });
+            await this.userModel.findByIdAndUpdate(userId, {
+                $addToSet: { groups: groupId },
+            });
         }
-        return this.findOne(groupId);
+        return this.groupModel
+            .findById(groupId)
+            .populate('members')
+            .lean();
     }
     async leaveGroup(groupId, userId) {
         const group = await this.findOne(groupId);
@@ -90,7 +104,7 @@ let GroupsService = class GroupsService {
         }
         const userObjectId = new mongoose_2.Types.ObjectId(userId);
         const group = await this.findOne(groupId);
-        const isMember = group.members.some(member => member._id.equals(userObjectId));
+        const isMember = group.members.some((member) => member && member._id && new mongoose_2.Types.ObjectId(member._id).equals(userObjectId));
         if (!isMember) {
             await this.groupModel.findByIdAndUpdate(groupId, { $addToSet: { members: userObjectId } });
         }
@@ -98,30 +112,21 @@ let GroupsService = class GroupsService {
     }
     async getUserGroupsWithMessages(userId) {
         if (!mongoose_2.Types.ObjectId.isValid(userId)) {
-            throw new common_1.NotFoundException('Invalid user ID');
+            throw new common_1.NotFoundException(`Invalid user ID: ${userId}`);
         }
-        const userObjectId = new mongoose_2.Types.ObjectId(userId);
         const groups = await this.groupModel
-            .find({ members: userObjectId })
+            .find({ members: new mongoose_2.Types.ObjectId(userId) })
             .populate('members', 'username email')
             .populate({
             path: 'messages',
             populate: [
-                {
-                    path: 'sender',
-                    model: 'User',
-                    select: 'username email',
-                },
-                {
-                    path: 'readBy.user',
-                    model: 'User',
-                    select: 'username email',
-                },
+                { path: 'sender', model: 'User', select: 'username email' },
+                { path: 'readBy.user', model: 'User', select: 'username email' },
             ],
         })
             .lean();
         if (!groups || groups.length === 0) {
-            throw new common_1.NotFoundException('No groups found for the user');
+            throw new common_1.NotFoundException(`No groups found for user ID: ${userId}`);
         }
         return groups.map(group => this.mapToPopulatedGroup(group));
     }
@@ -133,42 +138,35 @@ let GroupsService = class GroupsService {
             description: group.description,
             creator: group.creator,
             status: group.status,
-            members: group.members.map((member) => ({
-                _id: member._id,
-                username: member.username,
-                email: member.email,
-            })),
-            messages: ((_a = group.messages) === null || _a === void 0 ? void 0 : _a.map((message) => ({
-                _id: message._id,
-                content: message.content,
-                type: message.type,
-                sender: {
-                    _id: message.sender._id,
-                    username: message.sender.username,
-                    email: message.sender.email,
-                },
-                attachments: message.attachments,
-                readBy: message.readBy.map((readBy) => ({
-                    user: {
-                        _id: readBy.user._id,
-                        username: readBy.user.username,
-                        email: readBy.user.email,
-                    },
-                    readAt: readBy.readAt,
-                })),
-                createdAt: message.createdAt,
-                updatedAt: message.updatedAt,
+            members: ((_a = group.members) === null || _a === void 0 ? void 0 : _a.map((member) => ({
+                _id: (member === null || member === void 0 ? void 0 : member._id) || 'Unknown',
+                username: (member === null || member === void 0 ? void 0 : member.username) || 'Unknown',
+                email: (member === null || member === void 0 ? void 0 : member.email) || 'Unknown',
             }))) || [],
+            messages: group.messages || [],
             createdAt: group.createdAt,
             updatedAt: group.updatedAt,
         };
+    }
+    async findUserGroups(userId) {
+        console.log(userId, 'uer if from user grope');
+        if (!mongoose_2.Types.ObjectId.isValid(userId)) {
+            throw new common_1.NotFoundException(`Invalid user ID: ${userId}`);
+        }
+        const userObjectId = new mongoose_2.Types.ObjectId(userId);
+        const groups = await this.groupModel
+            .find({ members: userId })
+            .lean();
+        return groups;
     }
 };
 exports.GroupsService = GroupsService;
 exports.GroupsService = GroupsService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, mongoose_1.InjectModel)(group_schema_1.Group.name)),
+    __param(1, (0, mongoose_1.InjectModel)('User')),
     __metadata("design:paramtypes", [mongoose_2.Model,
+        mongoose_2.Model,
         websocket_gateway_1.WebSocketGateway])
 ], GroupsService);
 //# sourceMappingURL=group.service.js.map

@@ -3,6 +3,7 @@ import { Controller, Post, Get, Patch, Delete, Param, Body, UseGuards, Request }
 import { GroupsService } from './group.service';
 import { CreateGroupDto, UpdateGroupDto } from './dto/group.dto';
 import { AuthGuard } from "../auth/auth.guard"
+import { ObjectId } from 'mongodb';
 
 @Controller('groups')
 @UseGuards(AuthGuard) 
@@ -14,6 +15,13 @@ export class GroupsController {
     return this.groupsService.create(createGroupDto, req.user.id);
   }
 
+  @Get('my-groups') // Specific route for fetching user groups
+  getUserGroups(@Request() req) {
+    const userId = req.user.id; // Extract the logged-in user's ID
+    return this.groupsService.findUserGroups(userId); // Call the service method
+  }
+
+  
   @Get()
   findAll() {
     return this.groupsService.findAll();
@@ -39,13 +47,27 @@ export class GroupsController {
  return this.groupsService.joinByUserId(groupId, userId);
 }
 
-  @Post('join/:groupId') // Route for joining a group
-  joinGroup(@Param('groupId') groupId: string, @Request() req) {
-    return this.groupsService.joinGroup(groupId, req.user.id); // Call the service with groupId and userId
-  }
+@Post('join/:groupId') // Route for joining a group
+joinGroup(@Param('groupId') groupId: string, @Request() req) {
+  // Convert groupId string to ObjectId
+  const groupObjectId = new ObjectId(groupId);
+  return this.groupsService.joinGroup(groupObjectId, req.user.id); // Call the service with ObjectId and userId
+}
 
-  @Get('user-groups') // Endpoint to fetch the logged-in user's groups
-  getUserGroups(@Request() req) {
-    return this.groupsService.getUserGroupsWithMessages(req.user.id); // Fetch groups the user belongs to
-  }
+  // @Post('join/:groupId') // Route for joining a group
+  // joinGroup(@Param('groupId') groupId: string, @Request() req) {
+  //   return this.groupsService.joinGroup(groupId, req.user.id); // Call the service with groupId and userId
+  // }
+
+  // @Get('user-groups') // Endpoint to fetch the logged-in user's groups
+  // getUserGroups(@Request() req) {
+  //   console.log('Logged-in user ID:', req.user.id); // Log the user ID
+  //   return this.groupsService.getUserGroupsWithMessages(req.user.id); // Fetch groups the user belongs to
+  // }
+
+//   @Get('my-groups')
+// getUserGroups(@Request() req) {
+//   const userId = req.user.id; // Extract the logged-in user's ID
+//   return this.groupsService.findUserGroups(userId); // Call the service method
+// }
 }
