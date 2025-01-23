@@ -27,7 +27,11 @@ let GroupsService = class GroupsService {
     async create(createGroupDto, userId) {
         const group = new this.groupModel(Object.assign(Object.assign({}, createGroupDto), { creator: userId, members: [userId] }));
         console.log('Creating group with members:', group.members);
-        return group.save();
+        const savedGroup = await group.save();
+        await this.userModel.findByIdAndUpdate(userId, {
+            $addToSet: { groups: savedGroup._id },
+        });
+        return savedGroup;
     }
     async findAll(status) {
         const query = status ? { status } : {};
