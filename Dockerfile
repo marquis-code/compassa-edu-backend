@@ -8,13 +8,13 @@ WORKDIR /usr/src/app
 COPY package*.json ./
 
 # Install dependencies
-RUN yarn
+RUN yarn install --frozen-lockfile
 
-# Copy the source code
+# Copy only source code
 COPY . .
 
 # Expose the application port
 EXPOSE 3000
 
-# Start the application
-CMD ["yarn", "start"]
+# Increase memory limit and start the app
+CMD ["node", "--max-old-space-size=512", "node_modules/.bin/nest", "start"]

@@ -17,7 +17,7 @@ app:
         memory: 512M
         cpus: '0.5'
       reservations:
-        memory: 256M
+        memory: 512M
 mongodb:
   image: mongo
   ports:
@@ -28,7 +28,7 @@ mongodb:
     resources:
       limits:
         memory: 1G
-        cpus: '1'
+        cpus: '0.75'
 redis:
   image: redis
   ports:

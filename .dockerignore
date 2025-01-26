@@ -31,3 +31,7 @@ coverage
 # Ignore documentation files
 docs
 README.md
+
+node_modules
+npm-debug.log
+.env
