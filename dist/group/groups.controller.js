@@ -26,6 +26,9 @@ let GroupsController = class GroupsController {
         return this.groupsService.create(createGroupDto, req.user.id);
     }
     getUserGroups(req) {
+        console.log('Request Object:', req);
+        console.log('Request User Object:', req.user);
+        console.log('User ID from request:', req.user.id);
         const userId = req.user.id;
         return this.groupsService.findUserGroups(userId);
     }

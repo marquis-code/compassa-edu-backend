@@ -68,10 +68,10 @@ UserSchema.methods.matchPassword = async function (enteredPassword: string) {
   return await compare(enteredPassword, this.password);
 };
 
-
 UserSchema.methods.getSignedJwtToken = function () {
+  console.log('Generating token for user ID:', this._id);
   const secret = process.env.JWT_SECRET;
-  const expiresIn = process.env.JWT_EXPIRE ? parseInt(process.env.JWT_EXPIRE, 10) : undefined;
+  const expiresIn: number = 3600; // 1 hour in seconds
 
   if (!secret) {
     throw new Error('JWT_SECRET is not defined');
@@ -79,7 +79,7 @@ UserSchema.methods.getSignedJwtToken = function () {
 
   const options: SignOptions = { expiresIn };
 
-  return sign({ id: this.id }, secret, options);
+  return sign({ id: this._id }, secret, options);
 };
 
 UserSchema.methods.getResetPasswordToken = function () {

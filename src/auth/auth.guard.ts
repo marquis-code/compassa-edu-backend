@@ -15,64 +15,120 @@ import { Request } from "express"
 import { Model } from "mongoose"
 import { User, UserDocument } from "../user/user.schema"
 
+// @Injectable()
+// export class AuthGuard implements CanActivate {
+// 	constructor(
+// 		@InjectModel(User.name) private readonly User: Model<UserDocument>,
+// 	) {}
+
+// 	async canActivate(ctx: ExecutionContext) {
+// 		const request = ctx.switchToHttp().getRequest()
+
+// 		try {
+// 			const token = this.getToken(request)
+// 			console.log('Received Token:', token)
+
+// 			const decodedToken: any = verify(token, process.env.JWT_SECRET)
+// 			console.log('Decoded Token:', decodedToken)
+
+// 			const user = await this.User.findById(decodedToken.id)
+// 			console.log('Found User:', user)
+
+// 			if (!user)
+// 				throw new UnauthorizedException([
+// 					"User not found",
+// 					"Please login again",
+// 				])
+
+// 			request.user = user
+
+// 			return true
+// 		} catch (err) {
+// 			switch (err.name) {
+// 				case "UnauthorizedException":
+// 					throw err
+
+// 				case "TokenExpiredError":
+// 					throw new UnauthorizedException([
+// 						"Login token expired",
+// 						"Please login again",
+// 					])
+
+// 				case "JsonWebTokenError":
+// 					throw new UnauthorizedException([
+// 						"Ivalid login token",
+// 						"Please login again",
+// 					])
+
+// 				default:
+// 					throw new UnauthorizedException([
+// 						"Not authorized to access this resource",
+// 					])
+// 			}
+// 		}
+// 	}
+
+// 	protected getToken(request: Request) {
+// 		const authorization = request.headers.authorization
+
+// 		if (!(authorization && authorization.startsWith("Bearer")))
+// 			throw new Error("Invalid Authorization Header")
+
+// 		const token = authorization.split(" ")[1]
+
+// 		return token
+// 	}
+// }
+
 @Injectable()
 export class AuthGuard implements CanActivate {
-	constructor(
-		@InjectModel(User.name) private readonly User: Model<UserDocument>,
-	) {}
+  constructor(
+    @InjectModel(User.name) private readonly User: Model<UserDocument>,
+  ) {}
 
-	async canActivate(ctx: ExecutionContext) {
-		const request = ctx.switchToHttp().getRequest()
+  async canActivate(ctx: ExecutionContext) {
+    const request = ctx.switchToHttp().getRequest()
 
-		try {
-			const token = this.getToken(request)
+    console.log('Request Headers:', request.headers);
 
-			const decodedToken: any = verify(token, process.env.JWT_SECRET)
+    try {
+      const token = this.getToken(request)
+      console.log('Extracted Token:', token)
 
-			const user = await this.User.findById(decodedToken.id)
+      const decodedToken: any = verify(token, process.env.JWT_SECRET)
+      console.log('Decoded Token:', decodedToken)
 
-			if (!user)
-				throw new UnauthorizedException([
-					"User not found",
-					"Please login again",
-				])
+      const user = await this.User.findById(decodedToken.id)
+      console.log('Found User:', user)
 
-			request.user = user
+      if (!user)
+        throw new UnauthorizedException([
+          "User not found",
+          "Please login again",
+        ])
 
-			return true
-		} catch (err) {
-			switch (err.name) {
-				case "UnauthorizedException":
-					throw err
+      request.user = user
 
-				case "TokenExpiredError":
-					throw new UnauthorizedException([
-						"Login token expired",
-						"Please login again",
-					])
+      return true
+    } catch (err) {
+      console.error('Auth Guard Error:', err)
+      throw new UnauthorizedException([
+        "Login token expired",
+        "Please login again"
+      ])
+    }
+  }
 
-				case "JsonWebTokenError":
-					throw new UnauthorizedException([
-						"Ivalid login token",
-						"Please login again",
-					])
+  protected getToken(request: Request) {
+    const authorization = request.headers.authorization
 
-				default:
-					throw new UnauthorizedException([
-						"Not authorized to access this resource",
-					])
-			}
-		}
-	}
+    console.log('Authorization Header:', authorization)
 
-	protected getToken(request: Request) {
-		const authorization = request.headers.authorization
+    if (!(authorization && authorization.startsWith("Bearer")))
+      throw new Error("Invalid Authorization Header")
 
-		if (!(authorization && authorization.startsWith("Bearer")))
-			throw new Error("Invalid Authorization Header")
+    const token = authorization.split(" ")[1]
 
-		const token = authorization.split(" ")[1]
-
-		return token
-	}
+    return token
+  }
 }

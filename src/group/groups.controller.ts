@@ -1,25 +1,35 @@
 // groups/groups.controller.ts
-import { Controller, Post, Get, Patch, Delete, Param, Body, UseGuards, Request } from '@nestjs/common';
+import { Controller, Post, Get, Patch, Delete, Param, Body, UseGuards, Request, Logger } from '@nestjs/common';
 import { GroupsService } from './group.service';
 import { CreateGroupDto, UpdateGroupDto } from './dto/group.dto';
 import { AuthGuard } from "../auth/auth.guard"
 import { Model, Types } from 'mongoose';
 
+const logger = new Logger('Bootstrap');
+
 @Controller('groups')
 @UseGuards(AuthGuard) 
 export class GroupsController {
   constructor(private readonly groupsService: GroupsService) {}
-
   @Post()
   create(@Body() createGroupDto: CreateGroupDto, @Request() req) {
     return this.groupsService.create(createGroupDto, req.user.id);
   }
 
-  @Get('my-groups') // Specific route for fetching user groups
-  getUserGroups(@Request() req) {
-    const userId = req.user.id; // Extract the logged-in user's ID
-    return this.groupsService.findUserGroups(userId); // Call the service method
-  }
+  // @Get('my-groups') // Specific route for fetching user groups
+  // getUserGroups(@Request() req) {
+  //   const userId = req.user.id; // Extract the logged-in user's ID
+  //   return this.groupsService.findUserGroups(userId); // Call the service method
+  // }
+
+  @Get('my-groups')
+getUserGroups(@Request() req) {
+  logger.log('Request Object:', req);
+  logger.log('Request User Object:', req.user);
+  logger.log('User ID from request:', req.user.id);
+  const userId = req.user.id;
+  return this.groupsService.findUserGroups(userId);
+}
 
   
   @Get()
@@ -62,7 +72,7 @@ joinGroup(@Param('groupId') groupId: string, @Request() req) {
 
   // @Get('user-groups') // Endpoint to fetch the logged-in user's groups
   // getUserGroups(@Request() req) {
-  //   console.log('Logged-in user ID:', req.user.id); // Log the user ID
+  //   logger.log('Logged-in user ID:', req.user.id); // Log the user ID
   //   return this.groupsService.getUserGroupsWithMessages(req.user.id); // Fetch groups the user belongs to
   // }
 

@@ -24,10 +24,14 @@ let AuthGuard = class AuthGuard {
     }
     async canActivate(ctx) {
         const request = ctx.switchToHttp().getRequest();
+        console.log('Request Headers:', request.headers);
         try {
             const token = this.getToken(request);
+            console.log('Extracted Token:', token);
             const decodedToken = (0, jsonwebtoken_1.verify)(token, process.env.JWT_SECRET);
+            console.log('Decoded Token:', decodedToken);
             const user = await this.User.findById(decodedToken.id);
+            console.log('Found User:', user);
             if (!user)
                 throw new common_1.UnauthorizedException([
                     "User not found",
@@ -37,28 +41,16 @@ let AuthGuard = class AuthGuard {
             return true;
         }
         catch (err) {
-            switch (err.name) {
-                case "UnauthorizedException":
-                    throw err;
-                case "TokenExpiredError":
-                    throw new common_1.UnauthorizedException([
-                        "Login token expired",
-                        "Please login again",
-                    ]);
-                case "JsonWebTokenError":
-                    throw new common_1.UnauthorizedException([
-                        "Ivalid login token",
-                        "Please login again",
-                    ]);
-                default:
-                    throw new common_1.UnauthorizedException([
-                        "Not authorized to access this resource",
-                    ]);
-            }
+            console.error('Auth Guard Error:', err);
+            throw new common_1.UnauthorizedException([
+                "Login token expired",
+                "Please login again"
+            ]);
         }
     }
     getToken(request) {
         const authorization = request.headers.authorization;
+        console.log('Authorization Header:', authorization);
         if (!(authorization && authorization.startsWith("Bearer")))
             throw new Error("Invalid Authorization Header");
         const token = authorization.split(" ")[1];

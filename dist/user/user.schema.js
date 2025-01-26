@@ -79,13 +79,14 @@ exports.UserSchema.methods.matchPassword = async function (enteredPassword) {
     return await (0, bcryptjs_1.compare)(enteredPassword, this.password);
 };
 exports.UserSchema.methods.getSignedJwtToken = function () {
+    console.log('Generating token for user ID:', this._id);
     const secret = process.env.JWT_SECRET;
-    const expiresIn = process.env.JWT_EXPIRE ? parseInt(process.env.JWT_EXPIRE, 10) : undefined;
+    const expiresIn = 3600;
     if (!secret) {
         throw new Error('JWT_SECRET is not defined');
     }
     const options = { expiresIn };
-    return (0, jsonwebtoken_1.sign)({ id: this.id }, secret, options);
+    return (0, jsonwebtoken_1.sign)({ id: this._id }, secret, options);
 };
 exports.UserSchema.methods.getResetPasswordToken = function () {
     const token = (0, crypto_1.randomBytes)(20).toString("base64url");

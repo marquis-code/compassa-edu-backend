@@ -1,4 +1,4 @@
-import { ValidationPipe } from "@nestjs/common";
+import { ValidationPipe, Logger } from "@nestjs/common";
 import { NestFactory } from "@nestjs/core";
 import { UserModule } from "./user/user.module";
 import { SwaggerModule, DocumentBuilder } from "@nestjs/swagger";
@@ -7,7 +7,12 @@ import { AppModule } from "./app.module";
 import { MaterialsModule } from "./materials/materials.module";
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  // const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, {
+    logger: ['log', 'error', 'warn', 'debug', 'verbose'], // Enable all log levels
+  });
+
+  const logger = new Logger('Bootstrap');
 
   app.setGlobalPrefix("/api/v1").useGlobalPipes(new ValidationPipe());
 
@@ -36,7 +41,8 @@ async function bootstrap() {
 
   const PORT = process.env.PORT || 3000;
   await app.listen(PORT);
-  console.log(`Application is running on: http://localhost:${PORT}`);
+  logger.log(`Application is running on: http://localhost:${PORT}`);
+  // console.log(`Application is running on: http://localhost:${PORT}`);
 }
 
 bootstrap();

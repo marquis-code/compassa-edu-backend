@@ -7,7 +7,10 @@ const swagger_1 = require("@nestjs/swagger");
 const app_module_1 = require("./app.module");
 const materials_module_1 = require("./materials/materials.module");
 async function bootstrap() {
-    const app = await core_1.NestFactory.create(app_module_1.AppModule);
+    const app = await core_1.NestFactory.create(app_module_1.AppModule, {
+        logger: ['log', 'error', 'warn', 'debug', 'verbose'],
+    });
+    const logger = new common_1.Logger('Bootstrap');
     app.setGlobalPrefix("/api/v1").useGlobalPipes(new common_1.ValidationPipe());
     const options = new swagger_1.DocumentBuilder()
         .setTitle("API")
@@ -26,7 +29,9 @@ async function bootstrap() {
         credentials: true,
     };
     app.enableCors(corsOptions);
-    await app.listen(3000);
+    const PORT = process.env.PORT || 3000;
+    await app.listen(PORT);
+    logger.log(`Application is running on: http://localhost:${PORT}`);
 }
 bootstrap();
 //# sourceMappingURL=main.js.map
