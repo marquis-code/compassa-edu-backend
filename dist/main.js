@@ -26,8 +26,7 @@ async function bootstrap() {
         credentials: true,
     };
     app.enableCors(corsOptions);
-    const PORT = process.env.PORT || 3000;
-    await app.listen(PORT);
+    await app.listen(3000);
 }
 bootstrap();
 //# sourceMappingURL=main.js.map
