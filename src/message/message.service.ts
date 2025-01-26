@@ -73,7 +73,7 @@ export class MessagesService {
     const savedMessage = await message.save();
   
     // Notify group members of the new message∏
-    this.wsGateway.notifyGroupMembers(groupId, 'newMessage', savedMessage);
+    this.wsGateway.notifyGroupMembers(groupId, 'message.new', savedMessage);
   
     return savedMessage;
   }

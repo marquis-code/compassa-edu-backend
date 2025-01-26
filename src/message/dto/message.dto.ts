@@ -21,6 +21,7 @@
 import { IsString, IsOptional, IsArray, IsEnum } from 'class-validator';
 
 export class CreateMessageDto {
+  @IsOptional()
   @IsString()
   content: string;
 

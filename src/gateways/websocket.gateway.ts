@@ -109,29 +109,67 @@ export class WebSocketGateway implements OnGatewayConnection, OnGatewayDisconnec
     });
   }
 
+  // @SubscribeMessage('message.new')
+  // handleNewMessage(client: Socket, payload: any) {
+  //   const { groupId, content, senderId, type = 'text' } = payload;
+
+  //   if (!groupId || !content || !senderId) {
+  //     console.error('Invalid message payload', payload);
+  //     return;
+  //   }
+
+  //   const message = {
+  //     id: new Types.ObjectId().toString(), // Generate a unique message ID
+  //     groupId,
+  //     content,
+  //     senderId,
+  //     type,
+  //     timestamp: new Date().toISOString(),
+  //   };
+
+  //   console.log('New message:', message);
+
+  //   // Emit the message to the group
+  //   this.server.to(`group-${groupId}`).emit('message.new', { message });
+  // }
+
   @SubscribeMessage('message.new')
-  handleNewMessage(client: Socket, payload: any) {
-    const { groupId, content, senderId, type = 'text' } = payload;
+handleNewMessage(client: Socket, payload: any) {
+  const { groupId, content, senderId, type = 'text' } = payload;
 
-    if (!groupId || !content || !senderId) {
-      console.error('Invalid message payload', payload);
-      return;
-    }
-
-    const message = {
-      id: new Types.ObjectId().toString(), // Generate a unique message ID
-      groupId,
-      content,
-      senderId,
-      type,
-      timestamp: new Date().toISOString(),
-    };
-
-    console.log('New message:', message);
-
-    // Emit the message to the group
-    this.server.to(`group-${groupId}`).emit('message.new', { message });
+  // Validate payload
+  if (!groupId || !content || !senderId) {
+    console.error('Invalid message payload', payload);
+    client.emit('error', { error: 'Invalid message payload' });
+    return;
   }
+
+  // Validate ObjectId values
+  if (!Types.ObjectId.isValid(groupId) || !Types.ObjectId.isValid(senderId)) {
+    console.error('Invalid groupId or senderId', payload);
+    client.emit('error', { error: 'Invalid groupId or senderId' });
+    return;
+  }
+
+  // Ensure client is in the group room
+  client.join(`group-${groupId}`);
+
+  // Create a message object
+  const message = {
+    id: new Types.ObjectId().toString(), // Generate a unique message ID
+    groupId,
+    content,
+    senderId,
+    type,
+    timestamp: new Date().toISOString(),
+  };
+
+  console.log('New message:', message);
+
+  // Emit the message to the group
+  this.server.to(`group-${groupId}`).emit('message.new', message);
+}
+
 
   @SubscribeMessage('messages.fetch')
   handleFetchMessages(client: Socket, payload: any) {
@@ -160,7 +198,11 @@ export class WebSocketGateway implements OnGatewayConnection, OnGatewayDisconnec
     client.emit('messages.update', messages);
   }
 
+  // notifyGroupMembers(groupId: Types.ObjectId, event: string, data: any) {
+  //   this.server.to(`group-${groupId}`).emit(event, data);
+  // }
   notifyGroupMembers(groupId: Types.ObjectId, event: string, data: any) {
-    this.server.to(`group-${groupId}`).emit(event, data);
+    console.log(`Notifying group members in room: group-${groupId.toString()} with event: ${event}`);
+    this.server.to(`group-${groupId.toString()}`).emit(event, data);
   }
 }
