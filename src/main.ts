@@ -1,22 +1,14 @@
-import { ValidationPipe } from "@nestjs/common";
-import { NestFactory } from "@nestjs/core";
-import { UserModule } from "./user/user.module";
-import { SwaggerModule, DocumentBuilder } from "@nestjs/swagger";
-import { CorsOptions } from "@nestjs/common/interfaces/external/cors-options.interface";
-import { AppModule } from "./app.module";
-import { MaterialsModule } from "./materials/materials.module";
-
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   app.setGlobalPrefix("/api/v1").useGlobalPipes(new ValidationPipe());
 
   const options = new DocumentBuilder()
-    .setTitle("API")
-    .setDescription("API description")
-    .setVersion("1.0")
-    .addTag("API")
-    .build();
+      .setTitle("API")
+      .setDescription("API description")
+      .setVersion("1.0")
+      .addTag("API")
+      .build();
 
   const document = SwaggerModule.createDocument(app, options, {
     include: [UserModule, MaterialsModule],
@@ -34,8 +26,10 @@ async function bootstrap() {
 
   app.enableCors(corsOptions);
 
-  // const PORT = process.env.PORT || 3000;
-  await app.listen(3000);
+  // Use the PORT environment variable or default to 3000
+  const PORT = process.env.PORT || 3000;
+  await app.listen(PORT);
+  console.log(`Application is running on: http://localhost:${PORT}`);
 }
 
 bootstrap();
