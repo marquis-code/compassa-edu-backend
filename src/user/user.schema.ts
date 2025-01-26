@@ -1,7 +1,7 @@
 import { Schema, Prop, SchemaFactory } from "@nestjs/mongoose";
 import { Types } from "mongoose";
 import { HydratedDocument } from "mongoose";
-import { sign } from "jsonwebtoken";
+import { sign, SignOptions } from 'jsonwebtoken';
 import { genSalt, hash, compare } from "bcryptjs";
 import { randomBytes, createHash } from "crypto";
 
@@ -68,10 +68,86 @@ UserSchema.methods.matchPassword = async function (enteredPassword: string) {
   return await compare(enteredPassword, this.password);
 };
 
+// UserSchema.methods.getSignedJwtToken = function () {
+//   return sign({ id: this.id }, process.env.JWT_SECRET, {
+//     expiresIn: process.env.JWT_EXPIRE,
+//   });
+// };
+
+// UserSchema.methods.getSignedJwtToken = function () {
+//   return sign(
+//     { id: this.id }, 
+//     process.env.JWT_SECRET as string, 
+//     { 
+//       expiresIn: process.env.JWT_EXPIRE as string 
+//     }
+//   );
+// };
+
+// UserSchema.methods.getSignedJwtToken = function () {
+//   if (!process.env.JWT_SECRET) {
+//     throw new Error('JWT_SECRET is not defined');
+//   }
+//   if (!process.env.JWT_EXPIRE) {
+//     throw new Error('JWT_EXPIRE is not defined');
+//   }
+
+//   return sign(
+//     { id: this.id }, 
+//     process.env.JWT_SECRET, 
+//     { expiresIn: process.env.JWT_EXPIRE }
+//   );
+// };
+
+// import { sign } from 'jsonwebtoken';
+
+// UserSchema.methods.getSignedJwtToken = function () {
+//   const secret = process.env.JWT_SECRET;
+//   const expiresIn = process.env.JWT_EXPIRE;
+
+//   if (!secret) {
+//     throw new Error('JWT_SECRET is not defined');
+//   }
+//   if (!expiresIn) {
+//     throw new Error('JWT_EXPIRE is not defined');
+//   }
+
+//   return sign(
+//     { id: this.id }, 
+//     secret, 
+//     { expiresIn }
+//   );
+// };
+
+// import { sign, SignOptions } from 'jsonwebtoken';
+
+// UserSchema.methods.getSignedJwtToken = function () {
+//   const secret = process.env.JWT_SECRET;
+//   const expiresIn = process.env.JWT_EXPIRE;
+
+//   if (!secret) {
+//     throw new Error('JWT_SECRET is not defined');
+//   }
+//   if (!expiresIn) {
+//     throw new Error('JWT_EXPIRE is not defined');
+//   }
+
+//   const options: SignOptions = { expiresIn };
+
+//   return sign({ id: this.id }, secret, options);
+// };
+
 UserSchema.methods.getSignedJwtToken = function () {
-  return sign({ id: this.id }, process.env.JWT_SECRET, {
-    expiresIn: process.env.JWT_EXPIRE,
-  });
+  const secret = process.env.JWT_SECRET;
+  const expiresIn = process.env.JWT_EXPIRE ? parseInt(process.env.JWT_EXPIRE, 10) : undefined;
+
+  if (!secret) {
+    throw new Error('JWT_SECRET is not defined');
+  }
+
+  const options: SignOptions = { expiresIn };
+
+  return sign({ id: this.id }, secret, options);
 };
 
 UserSchema.methods.getResetPasswordToken = function () {

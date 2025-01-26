@@ -17,7 +17,7 @@ const common_1 = require("@nestjs/common");
 const group_service_1 = require("./group.service");
 const group_dto_1 = require("./dto/group.dto");
 const auth_guard_1 = require("../auth/auth.guard");
-const mongodb_1 = require("mongodb");
+const mongoose_1 = require("mongoose");
 let GroupsController = class GroupsController {
     constructor(groupsService) {
         this.groupsService = groupsService;
@@ -45,7 +45,7 @@ let GroupsController = class GroupsController {
         return this.groupsService.joinByUserId(groupId, userId);
     }
     joinGroup(groupId, req) {
-        const groupObjectId = new mongodb_1.ObjectId(groupId);
+        const groupObjectId = new mongoose_1.Types.ObjectId(groupId);
         return this.groupsService.joinGroup(groupObjectId, req.user.id);
     }
 };

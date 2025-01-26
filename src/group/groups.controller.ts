@@ -3,7 +3,7 @@ import { Controller, Post, Get, Patch, Delete, Param, Body, UseGuards, Request }
 import { GroupsService } from './group.service';
 import { CreateGroupDto, UpdateGroupDto } from './dto/group.dto';
 import { AuthGuard } from "../auth/auth.guard"
-import { ObjectId } from 'mongodb';
+import { Model, Types } from 'mongoose';
 
 @Controller('groups')
 @UseGuards(AuthGuard) 
@@ -50,7 +50,8 @@ export class GroupsController {
 @Post('join/:groupId') // Route for joining a group
 joinGroup(@Param('groupId') groupId: string, @Request() req) {
   // Convert groupId string to ObjectId
-  const groupObjectId = new ObjectId(groupId);
+  // const groupObjectId = new ObjectId(groupId);
+  const groupObjectId = new Types.ObjectId(groupId);
   return this.groupsService.joinGroup(groupObjectId, req.user.id); // Call the service with ObjectId and userId
 }
 
