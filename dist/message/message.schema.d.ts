@@ -18,7 +18,7 @@ export interface MessagePopulated extends Document {
         email: string;
     };
     group: Types.ObjectId;
-    content: string;
+    content?: string;
     attachments: string[];
     type: 'text' | 'image' | 'document' | 'video' | 'audio';
     readBy: ReadByPopulated[];
@@ -28,10 +28,12 @@ export interface MessagePopulated extends Document {
 export declare class Message extends Document {
     sender: Types.ObjectId;
     group: Types.ObjectId;
-    content: string;
+    content?: string;
     attachments: string[];
     type: 'text' | 'image' | 'document' | 'video' | 'audio';
     readBy: ReadBy[];
+    createdAt: Date;
+    updatedAt: Date;
 }
 export declare const MessageSchema: import("mongoose").Schema<Message, import("mongoose").Model<Message, any, any, any, Document<unknown, any, Message> & Message & Required<{
     _id: unknown;

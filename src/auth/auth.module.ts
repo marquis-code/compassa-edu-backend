@@ -7,6 +7,7 @@ import { AuthService } from "./auth.sevice";
 import { AuthGuard } from "./auth.guard";
 import { User, UserSchema } from '../user/user.schema';
 import { WsJwtGuard } from './ws-jwt.guard';
+import { GroupsModule } from '../group/group.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { WsJwtGuard } from './ws-jwt.guard';
       signOptions: { expiresIn: '1h' }, // Adjust expiration if needed
     }),
     forwardRef(() => UserModule), // Use forwardRef here
+    forwardRef(() => GroupsModule),
   ],
   controllers: [AuthController],
   providers: [AuthService, AuthGuard, WsJwtGuard],

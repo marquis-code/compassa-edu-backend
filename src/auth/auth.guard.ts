@@ -15,71 +15,6 @@ import { Request } from "express"
 import { Model } from "mongoose"
 import { User, UserDocument } from "../user/user.schema"
 
-// @Injectable()
-// export class AuthGuard implements CanActivate {
-// 	constructor(
-// 		@InjectModel(User.name) private readonly User: Model<UserDocument>,
-// 	) {}
-
-// 	async canActivate(ctx: ExecutionContext) {
-// 		const request = ctx.switchToHttp().getRequest()
-
-// 		try {
-// 			const token = this.getToken(request)
-// 			console.log('Received Token:', token)
-
-// 			const decodedToken: any = verify(token, process.env.JWT_SECRET)
-// 			console.log('Decoded Token:', decodedToken)
-
-// 			const user = await this.User.findById(decodedToken.id)
-// 			console.log('Found User:', user)
-
-// 			if (!user)
-// 				throw new UnauthorizedException([
-// 					"User not found",
-// 					"Please login again",
-// 				])
-
-// 			request.user = user
-
-// 			return true
-// 		} catch (err) {
-// 			switch (err.name) {
-// 				case "UnauthorizedException":
-// 					throw err
-
-// 				case "TokenExpiredError":
-// 					throw new UnauthorizedException([
-// 						"Login token expired",
-// 						"Please login again",
-// 					])
-
-// 				case "JsonWebTokenError":
-// 					throw new UnauthorizedException([
-// 						"Ivalid login token",
-// 						"Please login again",
-// 					])
-
-// 				default:
-// 					throw new UnauthorizedException([
-// 						"Not authorized to access this resource",
-// 					])
-// 			}
-// 		}
-// 	}
-
-// 	protected getToken(request: Request) {
-// 		const authorization = request.headers.authorization
-
-// 		if (!(authorization && authorization.startsWith("Bearer")))
-// 			throw new Error("Invalid Authorization Header")
-
-// 		const token = authorization.split(" ")[1]
-
-// 		return token
-// 	}
-// }
-
 @Injectable()
 export class AuthGuard implements CanActivate {
   constructor(
@@ -89,17 +24,17 @@ export class AuthGuard implements CanActivate {
   async canActivate(ctx: ExecutionContext) {
     const request = ctx.switchToHttp().getRequest()
 
-    console.log('Request Headers:', request.headers);
+    // console.log('Request Headers:', request.headers);
 
     try {
       const token = this.getToken(request)
-      console.log('Extracted Token:', token)
+      // console.log('Extracted Token:', token)
 
       const decodedToken: any = verify(token, process.env.JWT_SECRET)
-      console.log('Decoded Token:', decodedToken)
+      // console.log('Decoded Token:', decodedToken)
 
       const user = await this.User.findById(decodedToken.id)
-      console.log('Found User:', user)
+      // console.log('Found User:', user)
 
       if (!user)
         throw new UnauthorizedException([
@@ -122,7 +57,7 @@ export class AuthGuard implements CanActivate {
   protected getToken(request: Request) {
     const authorization = request.headers.authorization
 
-    console.log('Authorization Header:', authorization)
+    // console.log('Authorization Header:', authorization)
 
     if (!(authorization && authorization.startsWith("Bearer")))
       throw new Error("Invalid Authorization Header")

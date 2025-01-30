@@ -10,13 +10,19 @@ exports.SharedModule = void 0;
 const common_1 = require("@nestjs/common");
 const websocket_gateway_1 = require("./gateways/websocket.gateway");
 const auth_module_1 = require("./auth/auth.module");
+const group_module_1 = require("./group/group.module");
+const messages_module_1 = require("./message/messages.module");
 let SharedModule = class SharedModule {
 };
 exports.SharedModule = SharedModule;
 exports.SharedModule = SharedModule = __decorate([
     (0, common_1.Global)(),
     (0, common_1.Module)({
-        imports: [auth_module_1.AuthModule],
+        imports: [
+            (0, common_1.forwardRef)(() => auth_module_1.AuthModule),
+            (0, common_1.forwardRef)(() => group_module_1.GroupsModule),
+            (0, common_1.forwardRef)(() => messages_module_1.MessagesModule)
+        ],
         providers: [websocket_gateway_1.WebSocketGateway],
         exports: [websocket_gateway_1.WebSocketGateway],
     })

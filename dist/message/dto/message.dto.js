@@ -15,6 +15,7 @@ class CreateMessageDto {
 }
 exports.CreateMessageDto = CreateMessageDto;
 __decorate([
+    (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
 ], CreateMessageDto.prototype, "content", void 0);

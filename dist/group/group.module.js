@@ -12,7 +12,7 @@ const mongoose_1 = require("@nestjs/mongoose");
 const group_schema_1 = require("./group.schema");
 const group_service_1 = require("./group.service");
 const groups_controller_1 = require("./groups.controller");
-const websocket_gateway_1 = require("../gateways/websocket.gateway");
+const shared_module_1 = require("../shared.module");
 const auth_module_1 = require("../auth/auth.module");
 const user_module_1 = require("../user/user.module");
 let GroupsModule = class GroupsModule {
@@ -24,10 +24,11 @@ exports.GroupsModule = GroupsModule = __decorate([
             mongoose_1.MongooseModule.forFeature([{ name: group_schema_1.Group.name, schema: group_schema_1.GroupSchema }]),
             (0, common_1.forwardRef)(() => auth_module_1.AuthModule),
             (0, common_1.forwardRef)(() => user_module_1.UserModule),
+            (0, common_1.forwardRef)(() => shared_module_1.SharedModule),
         ],
         controllers: [groups_controller_1.GroupsController],
-        providers: [group_service_1.GroupsService, websocket_gateway_1.WebSocketGateway],
-        exports: [group_service_1.GroupsService],
+        providers: [group_service_1.GroupsService],
+        exports: [group_service_1.GroupsService, mongoose_1.MongooseModule],
     })
 ], GroupsModule);
 //# sourceMappingURL=group.module.js.map

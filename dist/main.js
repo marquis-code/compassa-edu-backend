@@ -8,7 +8,7 @@ const app_module_1 = require("./app.module");
 const materials_module_1 = require("./materials/materials.module");
 async function bootstrap() {
     const app = await core_1.NestFactory.create(app_module_1.AppModule, {
-        logger: ['log', 'error', 'warn', 'debug', 'verbose'],
+        logger: ['error', 'debug'],
     });
     const logger = new common_1.Logger('Bootstrap');
     app.setGlobalPrefix("/api/v1").useGlobalPipes(new common_1.ValidationPipe());
@@ -22,16 +22,17 @@ async function bootstrap() {
         include: [user_module_1.UserModule, materials_module_1.MaterialsModule],
     });
     swagger_1.SwaggerModule.setup("api", app, document);
-    const corsOptions = {
+    app.enableCors({
         origin: "*",
         methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
         allowedHeaders: "Content-Type, Accept, Authorization",
         credentials: true,
-    };
-    app.enableCors(corsOptions);
+    });
     const PORT = process.env.PORT || 3000;
     await app.listen(PORT);
-    logger.log(`Application is running on: http://localhost:${PORT}`);
+    const logMessage = `Application is running on: http://localhost:${PORT}`;
+    logger.log(logMessage);
+    console.log(logMessage);
 }
 bootstrap();
 //# sourceMappingURL=main.js.map

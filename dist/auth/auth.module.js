@@ -16,6 +16,7 @@ const auth_sevice_1 = require("./auth.sevice");
 const auth_guard_1 = require("./auth.guard");
 const user_schema_1 = require("../user/user.schema");
 const ws_jwt_guard_1 = require("./ws-jwt.guard");
+const group_module_1 = require("../group/group.module");
 let AuthModule = class AuthModule {
 };
 exports.AuthModule = AuthModule;
@@ -28,6 +29,7 @@ exports.AuthModule = AuthModule = __decorate([
                 signOptions: { expiresIn: '1h' },
             }),
             (0, common_1.forwardRef)(() => user_module_1.UserModule),
+            (0, common_1.forwardRef)(() => group_module_1.GroupsModule),
         ],
         controllers: [auth_controller_1.AuthController],
         providers: [auth_sevice_1.AuthService, auth_guard_1.AuthGuard, ws_jwt_guard_1.WsJwtGuard],

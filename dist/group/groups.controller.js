@@ -18,6 +18,7 @@ const group_service_1 = require("./group.service");
 const group_dto_1 = require("./dto/group.dto");
 const auth_guard_1 = require("../auth/auth.guard");
 const mongoose_1 = require("mongoose");
+const logger = new common_1.Logger('Bootstrap');
 let GroupsController = class GroupsController {
     constructor(groupsService) {
         this.groupsService = groupsService;
@@ -26,9 +27,9 @@ let GroupsController = class GroupsController {
         return this.groupsService.create(createGroupDto, req.user.id);
     }
     getUserGroups(req) {
-        console.log('Request Object:', req);
-        console.log('Request User Object:', req.user);
-        console.log('User ID from request:', req.user.id);
+        logger.log('Request Object:', req);
+        logger.log('Request User Object:', req.user);
+        logger.log('User ID from request:', req.user.id);
         const userId = req.user.id;
         return this.groupsService.findUserGroups(userId);
     }

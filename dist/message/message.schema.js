@@ -24,7 +24,7 @@ __decorate([
     __metadata("design:type", mongoose_2.Types.ObjectId)
 ], Message.prototype, "group", void 0);
 __decorate([
-    (0, mongoose_1.Prop)({ required: true }),
+    (0, mongoose_1.Prop)({ default: undefined }),
     __metadata("design:type", String)
 ], Message.prototype, "content", void 0);
 __decorate([

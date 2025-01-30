@@ -17,7 +17,7 @@
 // export interface MessagePopulated extends Document {
 //   sender: { _id: Types.ObjectId; username: string; email: string }; // Populated sender details
 //   group: Types.ObjectId; // Reference to the group
-//   content: string; // Message content
+//   content?: string; // Message content (optional)
 //   attachments: string[]; // Array of attachments
 //   type: 'text' | 'image' | 'document' | 'video' | 'audio'; // Message type
 //   readBy: ReadByPopulated[]; // Populated readBy details
@@ -33,8 +33,8 @@
 //   @Prop({ type: Types.ObjectId, ref: 'Group', required: true })
 //   group: Types.ObjectId; // Reference to the group the message belongs to
 
-//   @Prop({ default: "" })
-//   content: string; // Message content
+//   @Prop({ default: undefined })
+//   content?: string; // Message content (optional)
 
 //   @Prop({ type: [String], default: [] })
 //   attachments: string[]; // Array of file URLs or references for media
@@ -52,10 +52,12 @@
 //     default: [],
 //   })
 //   readBy: ReadBy[]; // Array of objects tracking users who read the message
+//   createdAt: any;
+//   updatedAt: any;
+//   private __v: number;
 // }
 
 // export const MessageSchema = SchemaFactory.createForClass(Message);
-
 
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
@@ -111,6 +113,9 @@ export class Message extends Document {
     default: [],
   })
   readBy: ReadBy[]; // Array of objects tracking users who read the message
+
+  createdAt: Date; // Creation timestamp
+  updatedAt: Date; // Update timestamp
 }
 
 export const MessageSchema = SchemaFactory.createForClass(Message);
