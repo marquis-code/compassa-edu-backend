@@ -210,7 +210,7 @@ async handleNewMessage(client: Socket, payload: any) {
 
     // Emit the message as received (NO FORMATTING)
     this.server.to(payload.groupId).emit('receive-message', payload);
-    client.emit('message-sent', { success: true, messageId: chat._id });
+    client.emit('message-sent', { success: true, messageId: chat._id, payload });
   } catch (error) {
     this.logger.error('Error creating message:', error);
     client.emit('error', { error: 'Failed to create message', details: error.message });

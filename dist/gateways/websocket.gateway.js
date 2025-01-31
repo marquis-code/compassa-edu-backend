@@ -95,7 +95,7 @@ let WebSocketGateway = class WebSocketGateway {
             this.logger.log('Creating new message:', payload);
             const chat = await this.messagesService.create(payload, payload.senderId);
             this.server.to(payload.groupId).emit('receive-message', payload);
-            client.emit('message-sent', { success: true, messageId: chat._id });
+            client.emit('message-sent', { success: true, messageId: chat._id, payload });
         }
         catch (error) {
             this.logger.error('Error creating message:', error);

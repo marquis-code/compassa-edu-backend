@@ -38,9 +38,9 @@ let MessagesService = MessagesService_1 = class MessagesService {
             attachments,
             type,
         });
-        const savedMessage = await message.save();
+        let savedMessage = await message.save();
+        savedMessage = await this.messageModel.findById(savedMessage._id).populate('sender').populate('group');
         this.logger.debug(`Saved Message: ${JSON.stringify(savedMessage)}`);
-        console.log(savedMessage, 'saved hesssss here');
         this.wsGateway.notifyGroupMembers(groupId, 'message.new', savedMessage);
         return savedMessage;
     }
