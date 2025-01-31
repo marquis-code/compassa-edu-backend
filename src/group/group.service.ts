@@ -34,6 +34,7 @@ export class GroupsService {
     // Create the group
     const group = new this.groupModel({
       ...createGroupDto,
+      status: createGroupDto.status || 'public',
       creator: userId,
       members: [userId], // Ensure the creator is added as the first member
     });
@@ -239,33 +240,33 @@ export class GroupsService {
     );
   }
 
-  async joinByUserId(groupId: string, userId: string): Promise<PopulatedGroup> {
-    // Validate the user ID
-    if (!Types.ObjectId.isValid(userId)) {
-      throw new NotFoundException('Invalid user ID');
-    }
+  // async joinByUserId(groupId: string, userId: Types.ObjectId): Promise<PopulatedGroup> {
+  //   // Validate the user ID
+  //   if (!Types.ObjectId.isValid(userId)) {
+  //     throw new NotFoundException('Invalid user ID');
+  //   }
   
-    const userObjectId = new Types.ObjectId(userId);
+  //   const userObjectId = new Types.ObjectId(userId);
   
-    // Find the group
-    const group = await this.findOne(groupId);
+  //   // Find the group
+  //   const group = await this.findOne(groupId);
   
-    // Safely check if the user is a member of the group
-    const isMember = group.members.some(
-      (member) => member && member._id && new Types.ObjectId(member._id).equals(userObjectId)
-    );
+  //   // Safely check if the user is a member of the group
+  //   const isMember = group.members.some(
+  //     (member) => member && member._id && new Types.ObjectId(member._id).equals(userObjectId)
+  //   );
   
-    // Add the user to the group if they are not a member
-    if (!isMember) {
-      await this.groupModel.findByIdAndUpdate(
-        groupId,
-        { $addToSet: { members: userObjectId } }
-      );
-    }
+  //   // Add the user to the group if they are not a member
+  //   if (!isMember) {
+  //     await this.groupModel.findByIdAndUpdate(
+  //       groupId,
+  //       { $addToSet: { members: userObjectId } }
+  //     );
+  //   }
   
-    // Return the updated group
-    return this.findOne(groupId);
-  }
+  //   // Return the updated group
+  //   return this.findOne(groupId);
+  // }
   
   // async joinByUserId(groupId: string, userId: string): Promise<PopulatedGroup> {
   //   if (!Types.ObjectId.isValid(userId)) {
@@ -286,6 +287,37 @@ export class GroupsService {
 
   //   return this.findOne(groupId);
   // }
+
+  async joinByUserId(groupId: string, userId: string): Promise<PopulatedGroup> {
+    // Validate the user ID format before conversion
+    if (!Types.ObjectId.isValid(userId)) {
+      throw new NotFoundException('Invalid user ID');
+    }
+  
+    const userObjectId = new Types.ObjectId(userId);
+  
+    // Find the group
+    const group = await this.findOne(groupId);
+  
+    // Safely check if the user is already a member of the group
+    const isMember = group.members.some(
+      (member) => member?._id?.toString() === userObjectId.toString()
+    );
+  
+    // Add the user to the group if they are not a member
+    if (!isMember) {
+      await this.groupModel.findByIdAndUpdate(
+        groupId,
+        { $addToSet: { members: userObjectId } },
+        { new: true }
+      );
+    }
+  
+    // Return the updated group
+    return this.findOne(groupId);
+  }
+
+  
 
   async getUserGroupsWithMessages(userId: string): Promise<PopulatedGroup[]> {
     if (!Types.ObjectId.isValid(userId)) {

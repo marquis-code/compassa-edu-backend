@@ -25,7 +25,7 @@ let GroupsService = class GroupsService {
         this.wsGateway = wsGateway;
     }
     async create(createGroupDto, userId) {
-        const group = new this.groupModel(Object.assign(Object.assign({}, createGroupDto), { creator: userId, members: [userId] }));
+        const group = new this.groupModel(Object.assign(Object.assign({}, createGroupDto), { status: createGroupDto.status || 'public', creator: userId, members: [userId] }));
         console.log('Creating group with members:', group.members);
         const savedGroup = await group.save();
         await this.userModel.findByIdAndUpdate(userId, {
@@ -108,9 +108,9 @@ let GroupsService = class GroupsService {
         }
         const userObjectId = new mongoose_2.Types.ObjectId(userId);
         const group = await this.findOne(groupId);
-        const isMember = group.members.some((member) => member && member._id && new mongoose_2.Types.ObjectId(member._id).equals(userObjectId));
+        const isMember = group.members.some((member) => { var _a; return ((_a = member === null || member === void 0 ? void 0 : member._id) === null || _a === void 0 ? void 0 : _a.toString()) === userObjectId.toString(); });
         if (!isMember) {
-            await this.groupModel.findByIdAndUpdate(groupId, { $addToSet: { members: userObjectId } });
+            await this.groupModel.findByIdAndUpdate(groupId, { $addToSet: { members: userObjectId } }, { new: true });
         }
         return this.findOne(groupId);
     }
