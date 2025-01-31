@@ -48,6 +48,9 @@ let GroupsController = class GroupsController {
     joinGroupByUserId(groupId, userId) {
         return this.groupsService.joinByUserId(groupId, userId);
     }
+    leaveGroupByUserId(groupId, userId) {
+        return this.groupsService.leaveGroup(groupId, new mongoose_1.Types.ObjectId(userId));
+    }
     joinGroup(groupId, req) {
         const groupObjectId = new mongoose_1.Types.ObjectId(groupId);
         return this.groupsService.joinGroup(groupObjectId, req.user.id);
@@ -107,6 +110,14 @@ __decorate([
     __metadata("design:paramtypes", [String, String]),
     __metadata("design:returntype", void 0)
 ], GroupsController.prototype, "joinGroupByUserId", null);
+__decorate([
+    (0, common_1.Post)('leave-group/:groupId/:userId'),
+    __param(0, (0, common_1.Param)('groupId')),
+    __param(1, (0, common_1.Param)('userId')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, String]),
+    __metadata("design:returntype", void 0)
+], GroupsController.prototype, "leaveGroupByUserId", null);
 __decorate([
     (0, common_1.Post)('join/:groupId'),
     __param(0, (0, common_1.Param)('groupId')),

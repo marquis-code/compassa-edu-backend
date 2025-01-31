@@ -10,5 +10,6 @@ export declare class GroupsController {
     update(id: string, updateGroupDto: UpdateGroupDto, req: any): Promise<import("../interfaces/populated-group.interface").PopulatedGroup>;
     delete(id: string, req: any): Promise<void>;
     joinGroupByUserId(groupId: string, userId: string): Promise<import("../interfaces/populated-group.interface").PopulatedGroup>;
+    leaveGroupByUserId(groupId: string, userId: string): Promise<void>;
     joinGroup(groupId: string, req: any): Promise<import("../interfaces/populated-group.interface").PopulatedGroup>;
 }

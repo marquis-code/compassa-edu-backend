@@ -57,6 +57,14 @@ getUserGroups(@Request() req) {
  return this.groupsService.joinByUserId(groupId, userId);
 }
 
+@Post('leave-group/:groupId/:userId')
+leaveGroupByUserId(
+  @Param('groupId') groupId: string, 
+  @Param('userId') userId: string
+) {
+  return this.groupsService.leaveGroup(groupId, new Types.ObjectId(userId));
+}
+
 @Post('join/:groupId') // Route for joining a group
 joinGroup(@Param('groupId') groupId: string, @Request() req) {
   // Convert groupId string to ObjectId
