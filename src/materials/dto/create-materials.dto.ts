@@ -27,6 +27,8 @@ export enum MaterialType {
   DISSERTATION = 'dissertation',
   TUTORIAL_VIDEO = 'tutorial_video',
   REFERENCE_MATERIAL = 'reference_material',
+  PERSONAL_NOTE = 'personal_note',
+  DRAWINGS_AND_DIAGRAM = 'drawings_and_diagrams',
 }
 
 export enum AcademicLevel {
