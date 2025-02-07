@@ -22,7 +22,9 @@ export declare enum MaterialType {
     THESIS = "thesis",
     DISSERTATION = "dissertation",
     TUTORIAL_VIDEO = "tutorial_video",
-    REFERENCE_MATERIAL = "reference_material"
+    REFERENCE_MATERIAL = "reference_material",
+    PERSONAL_NOTE = "personal_note",
+    DRAWINGS_AND_DIAGRAM = "drawings_and_diagrams"
 }
 export declare enum AcademicLevel {
     ONE_HUNDRED = "100",

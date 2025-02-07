@@ -39,6 +39,9 @@ export class Material {
   @Prop({ required: false })
   comment?: string;
 
+  @Prop({ required: false })
+  lecturer?: string;
+
   @Prop({ type: [String], required: true }) // Allow multiple files or a single file
   fileUrls: string[];
 

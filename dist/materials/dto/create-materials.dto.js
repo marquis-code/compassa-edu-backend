@@ -39,6 +39,8 @@ var MaterialType;
     MaterialType["DISSERTATION"] = "dissertation";
     MaterialType["TUTORIAL_VIDEO"] = "tutorial_video";
     MaterialType["REFERENCE_MATERIAL"] = "reference_material";
+    MaterialType["PERSONAL_NOTE"] = "personal_note";
+    MaterialType["DRAWINGS_AND_DIAGRAM"] = "drawings_and_diagrams";
 })(MaterialType || (exports.MaterialType = MaterialType = {}));
 var AcademicLevel;
 (function (AcademicLevel) {
