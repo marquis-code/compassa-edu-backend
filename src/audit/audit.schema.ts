@@ -1,28 +1,46 @@
 import { Schema, Prop, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
+import { User } from '../user/user.schema';
+
+export type AuditTrailDocument = AuditTrail & Document;
+
+export enum AuditAction {
+  CREATE = 'CREATE',
+  UPDATE = 'UPDATE',
+  DELETE = 'DELETE',
+  LOGIN = 'LOGIN',
+  LOGOUT = 'LOGOUT',
+  ACCESS = 'ACCESS',
+}
 
 @Schema({ timestamps: true })
 export class AuditTrail extends Document {
-  @Prop({ required: true })
-  action: string; // e.g., CREATE, UPDATE, DELETE
+  @Prop({ required: true, enum: AuditAction })
+  action: AuditAction; // Defines clear action types
 
   @Prop({ required: true })
-  module: string; // e.g., 'User', 'Material'
+  module: string; // Example: 'User', 'Material', 'Order'
 
   @Prop()
-  documentId: string; // The ID of the affected document
+  documentId?: string; // ID of affected document
 
- @Prop({ type: Types.ObjectId, ref: 'User', required: true }) // Reference to the User model
-  user: Types.ObjectId;
+  @Prop({ type: Types.ObjectId, ref: 'User', required: true }) 
+  user: Types.ObjectId | User; // Store User object reference
+
+  @Prop({ type: Object })
+  changes?: Record<string, any>; // Stores changes for updates
+
+  @Prop({ type: Object })
+  metadata?: Record<string, any>;
 
   @Prop()
-  changes?: Record<string, any>; // Captures changes in case of updates
+  ipAddress?: string; // Captures user's IP
 
   @Prop()
-  ipAddress?: string; // Optional: IP address of the user
+  userAgent?: string; // Captures browser/device details
 
-  @Prop()
-  timestamp?: Date; // Action time
+  @Prop({ type: Object })
+  requestDetails?: Record<string, any>; // Optional metadata like headers or query params
 }
 
 export const AuditTrailSchema = SchemaFactory.createForClass(AuditTrail);

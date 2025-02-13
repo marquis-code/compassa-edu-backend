@@ -59,6 +59,10 @@ __decorate([
     __metadata("design:type", String)
 ], Material.prototype, "comment", void 0);
 __decorate([
+    (0, mongoose_1.Prop)({ required: false }),
+    __metadata("design:type", String)
+], Material.prototype, "lecturer", void 0);
+__decorate([
     (0, mongoose_1.Prop)({ type: [String], required: true }),
     __metadata("design:type", Array)
 ], Material.prototype, "fileUrls", void 0);

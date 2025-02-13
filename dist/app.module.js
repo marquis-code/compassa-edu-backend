@@ -23,6 +23,7 @@ const cloudinary_module_1 = require("./cloudinary/cloudinary.module");
 const upload_module_1 = require("./upload/upload.module");
 const materials_module_1 = require("./materials/materials.module");
 const group_module_1 = require("./group/group.module");
+const audit_module_1 = require("./audit/audit.module");
 const messages_module_1 = require("./message/messages.module");
 const shared_module_1 = require("./shared.module");
 const gateway_module_1 = require("./gateways/gateway.module");
@@ -72,6 +73,7 @@ exports.AppModule = AppModule = __decorate([
             messages_module_1.MessagesModule,
             gateway_module_1.GatewayModule,
             shared_module_1.SharedModule,
+            audit_module_1.AuditTrailModule
         ],
         providers: [
             { provide: core_1.APP_GUARD, useClass: throttler_1.ThrottlerGuard },

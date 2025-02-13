@@ -1,12 +1,24 @@
 import { Document, Types } from 'mongoose';
+import { User } from '../user/user.schema';
+export type AuditTrailDocument = AuditTrail & Document;
+export declare enum AuditAction {
+    CREATE = "CREATE",
+    UPDATE = "UPDATE",
+    DELETE = "DELETE",
+    LOGIN = "LOGIN",
+    LOGOUT = "LOGOUT",
+    ACCESS = "ACCESS"
+}
 export declare class AuditTrail extends Document {
-    action: string;
+    action: AuditAction;
     module: string;
-    documentId: string;
-    user: Types.ObjectId;
+    documentId?: string;
+    user: Types.ObjectId | User;
     changes?: Record<string, any>;
+    metadata?: Record<string, any>;
     ipAddress?: string;
-    timestamp?: Date;
+    userAgent?: string;
+    requestDetails?: Record<string, any>;
 }
 export declare const AuditTrailSchema: import("mongoose").Schema<AuditTrail, import("mongoose").Model<AuditTrail, any, any, any, Document<unknown, any, AuditTrail> & AuditTrail & Required<{
     _id: unknown;

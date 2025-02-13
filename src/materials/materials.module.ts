@@ -6,6 +6,7 @@ import { Material, MaterialSchema, Category, CategorySchema, Session, SessionSch
 import { UserModule } from '../user/user.module';
 import { User, UserSchema } from '../user/user.schema';
 import { AuthModule } from '../auth/auth.module';
+import { AuditTrailModule } from '../audit/audit.module';
 
 @Module({
   imports: [
@@ -17,7 +18,8 @@ import { AuthModule } from '../auth/auth.module';
     ]),
     forwardRef(() => UserModule),
     forwardRef(() => AuthModule),
-  ],
+    forwardRef(() => AuditTrailModule)
+  ],               
   controllers: [MaterialsController],
   providers: [MaterialService],
   exports: [MaterialService],

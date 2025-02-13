@@ -33,6 +33,7 @@ export declare class Material {
     name: string;
     description: string;
     comment?: string;
+    lecturer?: string;
     fileUrls: string[];
     status: MaterialStatus;
     user: Types.ObjectId;

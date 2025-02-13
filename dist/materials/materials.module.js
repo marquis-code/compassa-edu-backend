@@ -15,6 +15,7 @@ const materials_schema_1 = require("./materials.schema");
 const user_module_1 = require("../user/user.module");
 const user_schema_1 = require("../user/user.schema");
 const auth_module_1 = require("../auth/auth.module");
+const audit_module_1 = require("../audit/audit.module");
 let MaterialsModule = class MaterialsModule {
 };
 exports.MaterialsModule = MaterialsModule;
@@ -29,6 +30,7 @@ exports.MaterialsModule = MaterialsModule = __decorate([
             ]),
             (0, common_1.forwardRef)(() => user_module_1.UserModule),
             (0, common_1.forwardRef)(() => auth_module_1.AuthModule),
+            (0, common_1.forwardRef)(() => audit_module_1.AuditTrailModule)
         ],
         controllers: [materials_controller_1.MaterialsController],
         providers: [materials_service_1.MaterialService],

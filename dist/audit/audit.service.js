@@ -21,17 +21,50 @@ let AuditService = class AuditService {
     constructor(auditTrailModel) {
         this.auditTrailModel = auditTrailModel;
     }
-    async logAudit(action, module, documentId, userId, changes, ipAddress) {
+    async logAudit(action, module, documentId, user, changes, ipAddress, userAgent, metadata) {
+        const userId = user instanceof mongoose_2.Types.ObjectId ? user : user === null || user === void 0 ? void 0 : user._id;
         const auditLog = new this.auditTrailModel({
             action,
             module,
             documentId,
-            userId,
+            user: userId,
             changes,
+            metadata,
             ipAddress,
-            timestamp: new Date(),
+            userAgent,
         });
         await auditLog.save();
+    }
+    async getAuditLogs({ action, module, userId, startDate, endDate, page = 1, limit = 10, }) {
+        const filter = {};
+        if (action)
+            filter.action = action;
+        if (module)
+            filter.module = module;
+        if (userId)
+            filter.user = new mongoose_2.Types.ObjectId(userId);
+        if (startDate || endDate) {
+            filter.createdAt = {};
+            if (startDate)
+                filter.createdAt.$gte = new Date(startDate);
+            if (endDate)
+                filter.createdAt.$lte = new Date(endDate);
+        }
+        const logs = await this.auditTrailModel
+            .find(filter)
+            .populate('user', 'name email role')
+            .sort({ createdAt: -1 })
+            .skip((page - 1) * limit)
+            .limit(limit)
+            .exec();
+        const total = await this.auditTrailModel.countDocuments(filter);
+        return {
+            total,
+            page,
+            limit,
+            pages: Math.ceil(total / limit),
+            logs,
+        };
     }
 };
 exports.AuditService = AuditService;

@@ -1,44 +1,48 @@
+import { Document } from 'mongoose';
 import { MaterialService } from '../materials/materials.service';
 import { CreateMaterialDto, MaterialStatus } from './dto/create-materials.dto';
+import { MaterialDocument } from '../materials/materials.schema';
 import { UpdateMaterialDto } from './dto/update-materials.dto';
 import { CreateSessionDto } from './dto/create-session-dto';
 import { CreateCategoryDto } from './dto/create-category-dto';
+import { AuditService } from '../audit/audit.service';
 export declare class MaterialsController {
     private readonly materialService;
-    constructor(materialService: MaterialService);
+    private readonly auditService;
+    constructor(materialService: MaterialService, auditService: AuditService);
     uploadMaterial(createMaterialDto: CreateMaterialDto, req: any): Promise<{
         success: boolean;
-        data: import("./materials.schema").Material;
+        data: import("../materials/materials.schema").Material;
     }>;
-    createCategory(createCategoryDto: CreateCategoryDto): Promise<{
+    createCategory(createCategoryDto: CreateCategoryDto, req: any): Promise<{
         success: boolean;
-        data: import("./materials.schema").Category;
+        data: import("../materials/materials.schema").Category;
     }>;
-    getCategories(): Promise<{
+    getCategories(req: any): Promise<{
         success: boolean;
-        data: import("./materials.schema").Category[];
+        data: import("../materials/materials.schema").Category[];
     }>;
-    updateCategory(id: string, updateCategoryDto: CreateCategoryDto): Promise<{
+    updateCategory(id: string, updateCategoryDto: CreateCategoryDto, req: any): Promise<{
         success: boolean;
-        data: import("./materials.schema").Category;
+        data: import("../materials/materials.schema").Category;
     }>;
-    deleteCategory(id: string): Promise<{
+    deleteCategory(id: string, req: any): Promise<{
         success: boolean;
         message: string;
     }>;
-    createSession(createSessionDto: CreateSessionDto): Promise<{
+    createSession(createSessionDto: CreateSessionDto, req: any): Promise<{
         success: boolean;
-        data: import("./materials.schema").Session;
+        data: import("../materials/materials.schema").Session;
     }>;
-    getSessions(): Promise<{
+    getSessions(req: any): Promise<{
         success: boolean;
-        data: import("./materials.schema").Session[];
+        data: import("../materials/materials.schema").Session[];
     }>;
-    updateSession(id: string, updateSessionDto: CreateSessionDto): Promise<{
+    updateSession(id: string, updateSessionDto: CreateSessionDto, req: any): Promise<{
         success: boolean;
-        data: import("./materials.schema").Session;
+        data: import("../materials/materials.schema").Session;
     }>;
-    deleteSession(id: string): Promise<{
+    deleteSession(id: string, req: any): Promise<{
         success: boolean;
         message: string;
     }>;
@@ -46,39 +50,39 @@ export declare class MaterialsController {
         materials: CreateMaterialDto[];
     }, req: any): Promise<{
         success: boolean;
-        data: import("./materials.schema").Material[];
+        data: import("../materials/materials.schema").Material[];
     }>;
     findAll(req: any): Promise<{
         success: boolean;
-        data: import("./materials.schema").Material[];
+        data: import("../materials/materials.schema").Material[];
     }>;
     findAllUserActivities(userId: string, req: any): Promise<{
         success: boolean;
-        data: import("./materials.schema").Material[];
+        data: import("../materials/materials.schema").Material[];
     }>;
     findOne(id: string, req: any): Promise<{
         success: boolean;
-        data: import("./materials.schema").Material;
+        data: import("../materials/materials.schema").Material;
     }>;
-    update(id: string, UpdateMaterialDto: UpdateMaterialDto, req: any): Promise<{
+    update(id: string, updateMaterialDto: UpdateMaterialDto, req: any): Promise<{
         success: boolean;
-        data: import("./materials.schema").Material;
+        data: import("../materials/materials.schema").Material;
     }>;
     delete(id: string, req: any): Promise<{
         success: boolean;
         message: string;
     }>;
-    getMaterialsByCategory(categoryId: string): Promise<{
+    getMaterialsByCategory(categoryId: string, req: any): Promise<{
         success: boolean;
-        data: (import("mongoose").Document<unknown, {}, import("./materials.schema").MaterialDocument> & import("./materials.schema").Material & import("mongoose").Document<unknown, any, any> & Required<{
+        data: (Document<unknown, {}, MaterialDocument> & import("../materials/materials.schema").Material & Document<unknown, any, any> & Required<{
             _id: unknown;
         }> & {
             __v: number;
         })[];
     }>;
-    getMaterialsBySession(sessionId: string): Promise<{
+    getMaterialsBySession(sessionId: string, req: any): Promise<{
         success: boolean;
-        data: (import("mongoose").Document<unknown, {}, import("./materials.schema").MaterialDocument> & import("./materials.schema").Material & import("mongoose").Document<unknown, any, any> & Required<{
+        data: (Document<unknown, {}, MaterialDocument> & import("../materials/materials.schema").Material & Document<unknown, any, any> & Required<{
             _id: unknown;
         }> & {
             __v: number;
@@ -89,7 +93,7 @@ export declare class MaterialsController {
         userId: string;
         status: MaterialStatus;
         comment?: string;
-    }[]): Promise<{
+    }[], req: any): Promise<{
         success: number;
         failed: number;
         details: any[];

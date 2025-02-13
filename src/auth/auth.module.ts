@@ -8,6 +8,7 @@ import { AuthGuard } from "./auth.guard";
 import { User, UserSchema } from '../user/user.schema';
 import { WsJwtGuard } from './ws-jwt.guard';
 import { GroupsModule } from '../group/group.module';
+import { AuditTrailModule } from "src/audit/audit.module";
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { GroupsModule } from '../group/group.module';
     }),
     forwardRef(() => UserModule), // Use forwardRef here
     forwardRef(() => GroupsModule),
+    forwardRef(() =>  AuditTrailModule)
   ],
   controllers: [AuthController],
   providers: [AuthService, AuthGuard, WsJwtGuard],
