@@ -12,4 +12,12 @@ export declare class GroupsController {
     joinGroupByUserId(groupId: string, userId: string): Promise<import("../interfaces/populated-group.interface").PopulatedGroup>;
     leaveGroupByUserId(groupId: string, userId: string): Promise<void>;
     joinGroup(groupId: string, req: any): Promise<import("../interfaces/populated-group.interface").PopulatedGroup>;
+    joinGroupByInvite(inviteToken: string, req: any): Promise<import("mongoose").FlattenMaps<import("./group.schema").GroupDocument> & Required<{
+        _id: import("mongoose").FlattenMaps<unknown>;
+    }> & {
+        __v: number;
+    }>;
+    generateInviteLink(groupId: string, req: any): Promise<{
+        inviteLink: string;
+    }>;
 }

@@ -1,5 +1,5 @@
 // groups.service.ts
-import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException, ForbiddenException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { Group, GroupDocument } from './group.schema';
@@ -17,15 +17,6 @@ export class GroupsService {
     private readonly wsGateway: WebSocketGateway,
   ) {}
 
-  // async create(createGroupDto: CreateGroupDto, userId: Types.ObjectId): Promise<GroupDocument> {
-  //   const group = new this.groupModel({
-  //     ...createGroupDto,
-  //     creator: userId,
-  //     members: [userId], // Ensure the creator is added as the first member
-  //   });
-  //   console.log('Creating group with members:', group.members); // Debugging
-  //   return group.save();
-  // }
 
   async create(
     createGroupDto: CreateGroupDto,
@@ -470,6 +461,49 @@ export class GroupsService {
       .lean(); // Return plain JavaScript objects
   
     return groups; // Return the filtered groups
+  }
+
+
+
+  async joinGroupByInvite(inviteToken: string, userId: Types.ObjectId) {
+    const group = await this.groupModel.findOne({ inviteToken });
+    if (!group) {
+      throw new NotFoundException('Invalid or expired invite link');
+    }
+
+    const isMember = group.members.some((member) => member.equals(userId));
+    if (isMember) {
+      throw new BadRequestException('You are already a member of this group');
+    }
+
+    await this.groupModel.findByIdAndUpdate(group._id, {
+      $addToSet: { members: userId },
+    });
+
+    await this.userModel.findByIdAndUpdate(userId, {
+      $addToSet: { groups: group._id },
+    });
+
+    return this.groupModel.findById(group._id).populate('members').lean();
+  }
+
+  async generateInviteLink(groupId: Types.ObjectId, userId: Types.ObjectId) {
+    const group = await this.groupModel.findById(groupId);
+    if (!group) {
+      throw new NotFoundException('Group not found');
+    }
+
+    if (!group.creator.equals(userId)) {
+      throw new ForbiddenException('Only the group creator can generate invite links');
+    }
+
+    const inviteToken = new Types.ObjectId().toHexString();
+
+    await this.groupModel.findByIdAndUpdate(groupId, { inviteToken });
+
+    return {
+      inviteLink: `${process.env.APP_URL}/join-by-invite/${inviteToken}`,
+    };
   }
   
 }

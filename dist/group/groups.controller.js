@@ -55,6 +55,12 @@ let GroupsController = class GroupsController {
         const groupObjectId = new mongoose_1.Types.ObjectId(groupId);
         return this.groupsService.joinGroup(groupObjectId, req.user.id);
     }
+    async joinGroupByInvite(inviteToken, req) {
+        return this.groupsService.joinGroupByInvite(inviteToken, new mongoose_1.Types.ObjectId(req.user.id));
+    }
+    async generateInviteLink(groupId, req) {
+        return this.groupsService.generateInviteLink(new mongoose_1.Types.ObjectId(groupId), new mongoose_1.Types.ObjectId(req.user.id));
+    }
 };
 exports.GroupsController = GroupsController;
 __decorate([
@@ -126,6 +132,22 @@ __decorate([
     __metadata("design:paramtypes", [String, Object]),
     __metadata("design:returntype", void 0)
 ], GroupsController.prototype, "joinGroup", null);
+__decorate([
+    (0, common_1.Post)('join-by-invite/:inviteToken'),
+    __param(0, (0, common_1.Param)('inviteToken')),
+    __param(1, (0, common_1.Request)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:returntype", Promise)
+], GroupsController.prototype, "joinGroupByInvite", null);
+__decorate([
+    (0, common_1.Post)('generate-invite/:groupId'),
+    __param(0, (0, common_1.Param)('groupId')),
+    __param(1, (0, common_1.Request)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:returntype", Promise)
+], GroupsController.prototype, "generateInviteLink", null);
 exports.GroupsController = GroupsController = __decorate([
     (0, common_1.Controller)('groups'),
     (0, common_1.UseGuards)(auth_guard_1.AuthGuard),

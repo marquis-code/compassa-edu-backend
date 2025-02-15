@@ -163,6 +163,37 @@ let GroupsService = class GroupsService {
             .lean();
         return groups;
     }
+    async joinGroupByInvite(inviteToken, userId) {
+        const group = await this.groupModel.findOne({ inviteToken });
+        if (!group) {
+            throw new common_1.NotFoundException('Invalid or expired invite link');
+        }
+        const isMember = group.members.some((member) => member.equals(userId));
+        if (isMember) {
+            throw new common_1.BadRequestException('You are already a member of this group');
+        }
+        await this.groupModel.findByIdAndUpdate(group._id, {
+            $addToSet: { members: userId },
+        });
+        await this.userModel.findByIdAndUpdate(userId, {
+            $addToSet: { groups: group._id },
+        });
+        return this.groupModel.findById(group._id).populate('members').lean();
+    }
+    async generateInviteLink(groupId, userId) {
+        const group = await this.groupModel.findById(groupId);
+        if (!group) {
+            throw new common_1.NotFoundException('Group not found');
+        }
+        if (!group.creator.equals(userId)) {
+            throw new common_1.ForbiddenException('Only the group creator can generate invite links');
+        }
+        const inviteToken = new mongoose_2.Types.ObjectId().toHexString();
+        await this.groupModel.findByIdAndUpdate(groupId, { inviteToken });
+        return {
+            inviteLink: `${process.env.APP_URL}/join-by-invite/${inviteToken}`,
+        };
+    }
 };
 exports.GroupsService = GroupsService;
 exports.GroupsService = GroupsService = __decorate([

@@ -16,11 +16,6 @@ export class GroupsController {
     return this.groupsService.create(createGroupDto, req.user.id);
   }
 
-  // @Get('my-groups') // Specific route for fetching user groups
-  // getUserGroups(@Request() req) {
-  //   const userId = req.user.id; // Extract the logged-in user's ID
-  //   return this.groupsService.findUserGroups(userId); // Call the service method
-  // }
 
   @Get('my-groups')
 getUserGroups(@Request() req) {
@@ -73,20 +68,21 @@ joinGroup(@Param('groupId') groupId: string, @Request() req) {
   return this.groupsService.joinGroup(groupObjectId, req.user.id); // Call the service with ObjectId and userId
 }
 
-  // @Post('join/:groupId') // Route for joining a group
-  // joinGroup(@Param('groupId') groupId: string, @Request() req) {
-  //   return this.groupsService.joinGroup(groupId, req.user.id); // Call the service with groupId and userId
-  // }
 
-  // @Get('user-groups') // Endpoint to fetch the logged-in user's groups
-  // getUserGroups(@Request() req) {
-  //   logger.log('Logged-in user ID:', req.user.id); // Log the user ID
-  //   return this.groupsService.getUserGroupsWithMessages(req.user.id); // Fetch groups the user belongs to
-  // }
+@Post('join-by-invite/:inviteToken')
+async joinGroupByInvite(
+  @Param('inviteToken') inviteToken: string,
+  @Request() req
+) {
+  return this.groupsService.joinGroupByInvite(inviteToken, new Types.ObjectId(req.user.id));
+}
 
-//   @Get('my-groups')
-// getUserGroups(@Request() req) {
-//   const userId = req.user.id; // Extract the logged-in user's ID
-//   return this.groupsService.findUserGroups(userId); // Call the service method
-// }
+@Post('generate-invite/:groupId')
+async generateInviteLink(
+  @Param('groupId') groupId: string,
+  @Request() req
+) {
+  return this.groupsService.generateInviteLink(new Types.ObjectId(groupId), new Types.ObjectId(req.user.id));
+}
+
 }

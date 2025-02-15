@@ -20,4 +20,12 @@ export declare class GroupsService {
     getUserGroupsWithMessages(userId: string): Promise<PopulatedGroup[]>;
     private mapToPopulatedGroup;
     findUserGroups(userId: string): Promise<any[]>;
+    joinGroupByInvite(inviteToken: string, userId: Types.ObjectId): Promise<import("mongoose").FlattenMaps<GroupDocument> & Required<{
+        _id: import("mongoose").FlattenMaps<unknown>;
+    }> & {
+        __v: number;
+    }>;
+    generateInviteLink(groupId: Types.ObjectId, userId: Types.ObjectId): Promise<{
+        inviteLink: string;
+    }>;
 }
