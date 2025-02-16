@@ -11,6 +11,17 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
+var __rest = (this && this.__rest) || function (s, e) {
+    var t = {};
+    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
+        t[p] = s[p];
+    if (s != null && typeof Object.getOwnPropertySymbols === "function")
+        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
+            if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
+                t[p[i]] = s[p[i]];
+        }
+    return t;
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.GroupsService = void 0;
 const common_1 = require("@nestjs/common");
@@ -185,7 +196,7 @@ let GroupsService = class GroupsService {
         if (!group) {
             throw new common_1.NotFoundException('Group not found');
         }
-        if (!group.creator.equals(userId)) {
+        if (group.creator.toString() !== userId.toString()) {
             throw new common_1.ForbiddenException('Only the group creator can generate invite links');
         }
         const inviteToken = new mongoose_2.Types.ObjectId().toHexString();
@@ -193,6 +204,27 @@ let GroupsService = class GroupsService {
         return {
             inviteLink: `${process.env.APP_URL}/join-by-invite/${inviteToken}`,
         };
+    }
+    async createGroup(createGroupDto, userId) {
+        const { matricNumbers } = createGroupDto, groupData = __rest(createGroupDto, ["matricNumbers"]);
+        const users = await this.userModel.find({ matric: { $in: matricNumbers } }).lean();
+        const foundMatricNumbers = users.map((user) => user.matric);
+        const missingMatricNumbers = matricNumbers.filter(matric => !foundMatricNumbers.includes(matric));
+        if (missingMatricNumbers.length > 0) {
+            throw new common_1.BadRequestException({
+                message: 'Some users do not exist in the system.',
+                missingMatricNumbers,
+            });
+        }
+        const userIds = users.map(user => user._id.toString());
+        if (!userIds.includes(userId.toString())) {
+            userIds.push(userId.toString());
+        }
+        const group = new this.groupModel(Object.assign(Object.assign({}, groupData), { status: groupData.status || 'public', creator: userId.toString(), members: userIds }));
+        console.log('Creating group with members:', group.members);
+        const savedGroup = await group.save();
+        await this.userModel.updateMany({ _id: { $in: userIds.map(id => new mongoose_2.Types.ObjectId(id)) } }, { $addToSet: { groups: savedGroup._id } });
+        return this.groupModel.findById(savedGroup._id).lean();
     }
 };
 exports.GroupsService = GroupsService;

@@ -16,6 +16,22 @@ export class GroupsController {
     return this.groupsService.create(createGroupDto, req.user.id);
   }
 
+//   @Post('create-with-members')
+// async createGroup(
+//   @Body() createGroupDto: CreateGroupDto & { matricNumbers: string[] },
+//   @Request() req
+// ) {
+//   return this.groupsService.createGroup(createGroupDto, req.user.id);
+// }
+
+@Post('create-with-members')
+async createGroup(
+  @Body() createGroupDto: CreateGroupDto & { matricNumbers: string[] },
+  @Request() req
+) {
+  return this.groupsService.createGroup(createGroupDto, req.user.id);
+}
+
 
   @Get('my-groups')
 getUserGroups(@Request() req) {

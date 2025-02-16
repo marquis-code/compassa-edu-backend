@@ -28,4 +28,7 @@ export declare class GroupsService {
     generateInviteLink(groupId: Types.ObjectId, userId: Types.ObjectId): Promise<{
         inviteLink: string;
     }>;
+    createGroup(createGroupDto: CreateGroupDto & {
+        matricNumbers: string[];
+    }, userId: Types.ObjectId): Promise<GroupDocument>;
 }

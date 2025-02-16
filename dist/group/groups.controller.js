@@ -26,6 +26,9 @@ let GroupsController = class GroupsController {
     create(createGroupDto, req) {
         return this.groupsService.create(createGroupDto, req.user.id);
     }
+    async createGroup(createGroupDto, req) {
+        return this.groupsService.createGroup(createGroupDto, req.user.id);
+    }
     getUserGroups(req) {
         logger.log('Request Object:', req);
         logger.log('Request User Object:', req.user);
@@ -71,6 +74,14 @@ __decorate([
     __metadata("design:paramtypes", [group_dto_1.CreateGroupDto, Object]),
     __metadata("design:returntype", void 0)
 ], GroupsController.prototype, "create", null);
+__decorate([
+    (0, common_1.Post)('create-with-members'),
+    __param(0, (0, common_1.Body)()),
+    __param(1, (0, common_1.Request)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:returntype", Promise)
+], GroupsController.prototype, "createGroup", null);
 __decorate([
     (0, common_1.Get)('my-groups'),
     __param(0, (0, common_1.Request)()),

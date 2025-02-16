@@ -487,13 +487,33 @@ export class GroupsService {
     return this.groupModel.findById(group._id).populate('members').lean();
   }
 
+  // async generateInviteLink(groupId: Types.ObjectId, userId: Types.ObjectId) {
+  //   const group = await this.groupModel.findById(groupId);
+  //   if (!group) {
+  //     throw new NotFoundException('Group not found');
+  //   }
+
+  //   if (!group.creator.equals(userId)) {
+  //     throw new ForbiddenException('Only the group creator can generate invite links');
+  //   }
+
+  //   const inviteToken = new Types.ObjectId().toHexString();
+
+  //   await this.groupModel.findByIdAndUpdate(groupId, { inviteToken });
+
+  //   return {
+  //     inviteLink: `${process.env.APP_URL}/join-by-invite/${inviteToken}`,
+  //   };
+  // }
+
   async generateInviteLink(groupId: Types.ObjectId, userId: Types.ObjectId) {
     const group = await this.groupModel.findById(groupId);
     if (!group) {
       throw new NotFoundException('Group not found');
     }
 
-    if (!group.creator.equals(userId)) {
+    // Convert both IDs to strings for a reliable comparison
+    if (group.creator.toString() !== userId.toString()) {
       throw new ForbiddenException('Only the group creator can generate invite links');
     }
 
@@ -505,5 +525,241 @@ export class GroupsService {
       inviteLink: `${process.env.APP_URL}/join-by-invite/${inviteToken}`,
     };
   }
+
+
+  // group.service.ts
+// group.service.ts
+// async createGroup(
+//   createGroupDto: CreateGroupDto & { matricNumbers: string[] },
+//   userId: Types.ObjectId
+// ): Promise<GroupDocument> {
+//   const { matricNumbers, ...groupData } = createGroupDto;
+
+//   // Verify if all users exist
+//   const users = await this.userModel.find({ matric: { $in: matricNumbers } });
+//   if (users.length !== matricNumbers.length) {
+//     throw new Error('One or more matric numbers do not exist in the system');
+//   }
+
+//   // Create the group
+//   const group = new this.groupModel({
+//     ...groupData,
+//     status: groupData.status || 'public',
+//     creator: userId,
+//     members: [userId], // Ensure the creator is added as the first member
+//   });
+
+//   console.log('Creating group with members:', group.members);
+
+//   // Save the group
+//   const savedGroup = await group.save();
+
+//   const userIds = users.map(user => user._id);
   
+//   // Add users to the group
+//   await this.groupModel.findByIdAndUpdate(savedGroup._id, {
+//     $addToSet: { members: { $each: userIds } },
+//   });
+
+//   // Update users' profiles to include the group
+//   await this.userModel.updateMany(
+//     { _id: { $in: userIds } },
+//     { $addToSet: { groups: savedGroup._id } }
+//   );
+
+//   return this.groupModel.findById(savedGroup._id).populate('members');
+// }
+
+// async createGroup(
+//   createGroupDto: CreateGroupDto & { matricNumbers: string[] },
+//   userId: Types.ObjectId
+// ): Promise<GroupDocument | { message: string; missingMatricNumbers: string[] }> {
+//   const { matricNumbers, ...groupData } = createGroupDto;
+
+//   // Verify if all users exist
+//   const users = await this.userModel.find({ matric: { $in: matricNumbers } }).lean();
+//   const foundMatricNumbers = users.map((user: any) => user.matric);
+//   const missingMatricNumbers = matricNumbers.filter(matric => !foundMatricNumbers.includes(matric));
+//   // const users = await this.userModel.find({ matric: { $in: matricNumbers } });
+//   // const foundMatricNumbers = users.map(user => user.matric);
+//   // const missingMatricNumbers = matricNumbers.filter(matric => !foundMatricNumbers.includes(matric));
+
+//   if (missingMatricNumbers.length > 0) {
+//     return {
+//       message: 'Some users do not exist in the system.',
+//       missingMatricNumbers,
+//     };
+//   }
+
+//   // Create the group
+//   const group = new this.groupModel({
+//     ...groupData,
+//     status: groupData.status || 'public',
+//     creator: userId,
+//     members: [userId], // Ensure the creator is added as the first member
+//   });
+
+//   console.log('Creating group with members:', group.members);
+
+//   // Save the group
+//   const savedGroup = await group.save();
+
+//   const userIds = users.map(user => user._id);
+  
+//   // Add users to the group
+//   await this.groupModel.findByIdAndUpdate(savedGroup._id, {
+//     $addToSet: { members: { $each: userIds } },
+//   });
+
+//   // Update users' profiles to include the group
+//   await this.userModel.updateMany(
+//     { _id: { $in: userIds } },
+//     { $addToSet: { groups: savedGroup._id } }
+//   );
+
+//   return this.groupModel.findById(savedGroup._id).populate('members');
+// }
+
+// group.service.ts
+// async createGroup(
+//   createGroupDto: CreateGroupDto & { matricNumbers: string[] },
+//   userId: Types.ObjectId
+// ): Promise<GroupDocument> {
+//   const { matricNumbers, ...groupData } = createGroupDto;
+
+//   // Verify if all users exist
+//   const users = await this.userModel.find({ matric: { $in: matricNumbers } }).lean();
+//   const foundMatricNumbers = users.map((user: any) => user.matric);
+//   const missingMatricNumbers = matricNumbers.filter(matric => !foundMatricNumbers.includes(matric));
+
+//   if (missingMatricNumbers.length > 0) {
+//     throw new BadRequestException({
+//       message: 'Some users do not exist in the system.',
+//       missingMatricNumbers,
+//     });
+//   }
+
+//   // Create the group
+//   const group = new this.groupModel({
+//     ...groupData,
+//     status: groupData.status || 'public',
+//     creator: userId,
+//     members: [userId], // Ensure the creator is added as the first member
+//   });
+
+//   console.log('Creating group with members:', group.members);
+
+//   // Save the group
+//   const savedGroup = await group.save();
+
+//   const userIds = users.map(user => user._id);
+  
+//   // Add users to the group
+//   await this.groupModel.findByIdAndUpdate(savedGroup._id, {
+//     $addToSet: { members: { $each: userIds } },
+//   });
+
+//   // Update users' profiles to include the group
+//   await this.userModel.updateMany(
+//     { _id: { $in: userIds } },
+//     { $addToSet: { groups: savedGroup._id } }
+//   );
+
+//   return this.groupModel.findById(savedGroup._id).populate('members');
+// }
+
+// group.service.ts
+// async createGroup(
+//   createGroupDto: CreateGroupDto & { matricNumbers: string[] },
+//   userId: Types.ObjectId
+// ): Promise<GroupDocument> {
+//   const { matricNumbers, ...groupData } = createGroupDto;
+
+//   // Verify if all users exist
+//   const users = await this.userModel.find({ matric: { $in: matricNumbers } }).lean();
+//   const foundMatricNumbers = users.map((user: any) => user.matric);
+//   const missingMatricNumbers = matricNumbers.filter(matric => !foundMatricNumbers.includes(matric));
+
+//   if (missingMatricNumbers.length > 0) {
+//     throw new BadRequestException({
+//       message: 'Some users do not exist in the system.',
+//       missingMatricNumbers,
+//     });
+//   }
+
+//   // Get user IDs including the creator
+//   const userIds = users.map(user => user._id);
+//   if (!userIds.includes(userId)) {
+//     userIds.push(userId); // Ensure the creator is also included
+//   }
+
+//   // Create the group
+//   const group = new this.groupModel({
+//     ...groupData,
+//     status: groupData.status || 'public',
+//     creator: userId,
+//     members: userIds, // Ensure correct structure
+//   });
+
+//   console.log('Creating group with members:', group.members);
+
+//   // Save the group
+//   const savedGroup = await group.save();
+  
+//   // Update users' profiles to include the group
+//   await this.userModel.updateMany(
+//     { _id: { $in: userIds } },
+//     { $addToSet: { groups: savedGroup._id } }
+//   );
+
+//   return this.groupModel.findById(savedGroup._id).populate('members');
+// }
+
+// group.service.ts
+async createGroup(
+  createGroupDto: CreateGroupDto & { matricNumbers: string[] },
+  userId: Types.ObjectId
+): Promise<GroupDocument> {
+  const { matricNumbers, ...groupData } = createGroupDto;
+
+  // Verify if all users exist
+  const users = await this.userModel.find({ matric: { $in: matricNumbers } }).lean();
+  const foundMatricNumbers = users.map((user: any) => user.matric);
+  const missingMatricNumbers = matricNumbers.filter(matric => !foundMatricNumbers.includes(matric));
+
+  if (missingMatricNumbers.length > 0) {
+    throw new BadRequestException({
+      message: 'Some users do not exist in the system.',
+      missingMatricNumbers,
+    });
+  }
+
+  // Get user IDs including the creator
+  const userIds = users.map(user => user._id.toString());
+  if (!userIds.includes(userId.toString())) {
+    userIds.push(userId.toString()); // Ensure the creator is also included
+  }
+
+  // Create the group
+  const group = new this.groupModel({
+    ...groupData,
+    status: groupData.status || 'public',
+    creator: userId.toString(),
+    members: userIds, // Store as plain string IDs
+  });
+
+  console.log('Creating group with members:', group.members);
+
+  // Save the group
+  const savedGroup = await group.save();
+  
+  // Update users' profiles to include the group
+  await this.userModel.updateMany(
+    { _id: { $in: userIds.map(id => new Types.ObjectId(id)) } },
+    { $addToSet: { groups: savedGroup._id } }
+  );
+
+  return this.groupModel.findById(savedGroup._id).lean(); // Ensure response is plain JSON
+}
+
 }
