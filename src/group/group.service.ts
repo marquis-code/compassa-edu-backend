@@ -716,6 +716,53 @@ export class GroupsService {
 // }
 
 // group.service.ts
+// async createGroup(
+//   createGroupDto: CreateGroupDto & { matricNumbers: string[] },
+//   userId: Types.ObjectId
+// ): Promise<GroupDocument> {
+//   const { matricNumbers, ...groupData } = createGroupDto;
+
+//   // Verify if all users exist
+//   const users = await this.userModel.find({ matric: { $in: matricNumbers } }).lean();
+//   const foundMatricNumbers = users.map((user: any) => user.matric);
+//   const missingMatricNumbers = matricNumbers.filter(matric => !foundMatricNumbers.includes(matric));
+
+//   if (missingMatricNumbers.length > 0) {
+//     throw new BadRequestException({
+//       message: 'Some users do not exist in the system.',
+//       missingMatricNumbers,
+//     });
+//   }
+
+//   // Get user IDs including the creator
+//   const userIds = users.map(user => user._id.toString());
+//   if (!userIds.includes(userId.toString())) {
+//     userIds.push(userId.toString()); // Ensure the creator is also included
+//   }
+
+//   // Create the group
+//   const group = new this.groupModel({
+//     ...groupData,
+//     status: groupData.status || 'public',
+//     creator: userId.toString(),
+//     members: userIds, // Store as plain string IDs
+//   });
+
+//   console.log('Creating group with members:', group.members);
+
+//   // Save the group
+//   const savedGroup = await group.save();
+  
+//   // Update users' profiles to include the group
+//   await this.userModel.updateMany(
+//     { _id: { $in: userIds.map(id => new Types.ObjectId(id)) } },
+//     { $addToSet: { groups: savedGroup._id } }
+//   );
+
+//   return this.groupModel.findById(savedGroup._id).lean(); // Ensure response is plain JSON
+// }
+
+// group.service.ts
 async createGroup(
   createGroupDto: CreateGroupDto & { matricNumbers: string[] },
   userId: Types.ObjectId
@@ -735,10 +782,8 @@ async createGroup(
   }
 
   // Get user IDs including the creator
-  const userIds = users.map(user => user._id.toString());
-  if (!userIds.includes(userId.toString())) {
-    userIds.push(userId.toString()); // Ensure the creator is also included
-  }
+  let userIds = users.map(user => user._id.toString());
+  userIds = Array.from(new Set([...userIds, userId.toString()])); // Ensure uniqueness and include creator
 
   // Create the group
   const group = new this.groupModel({
@@ -761,5 +806,6 @@ async createGroup(
 
   return this.groupModel.findById(savedGroup._id).lean(); // Ensure response is plain JSON
 }
+
 
 }

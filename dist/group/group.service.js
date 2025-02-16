@@ -216,10 +216,8 @@ let GroupsService = class GroupsService {
                 missingMatricNumbers,
             });
         }
-        const userIds = users.map(user => user._id.toString());
-        if (!userIds.includes(userId.toString())) {
-            userIds.push(userId.toString());
-        }
+        let userIds = users.map(user => user._id.toString());
+        userIds = Array.from(new Set([...userIds, userId.toString()]));
         const group = new this.groupModel(Object.assign(Object.assign({}, groupData), { status: groupData.status || 'public', creator: userId.toString(), members: userIds }));
         console.log('Creating group with members:', group.members);
         const savedGroup = await group.save();
